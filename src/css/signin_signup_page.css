@@ -1,0 +1,85 @@
+@font-face {
+  font-family: "josefinSans";
+  src: url("../assets/fonts/josefinSans.ttf");
+}
+
+.inner_Div {
+  width: 440px;
+  border-radius: 70px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.inner_Div > img {
+  height: 200px;
+  width: 250px;
+  position: absolute;
+  top: -100px;
+  left: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.inner_Div > h1 {
+  font-family: "josefinSans", sans-serif;
+  margin: 90px 0px 25px 0px;
+}
+
+.inner_Div > input {
+  height: 60px;
+  width: 95%;
+  background-color: rgba(220, 220, 220, 0.9);
+  border-radius: 30px;
+  font-size: 20px;
+  margin: 10px 0px;
+  padding: 0px 20px;
+}
+
+.inner_Div > input::placeholder {
+  color: gray;
+}
+
+.inner_Div > input:focus {
+  border: 1px solid gray;
+  outline: none;
+}
+
+.inner_Div > button {
+  width: 95%;
+  height: 60px;
+  border-radius: 30px;
+  color: white;
+  background-color: #1e3a8a;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  font-family: "josefinSans", sans-serif;
+  font-size: 25px;
+}
+
+.inner_Div > span > a {
+  font-family: "josefinSans", sans-serif;
+}
+
+@media only screen and (max-width: 460px) {
+  .signup_main_Div {
+    padding-top: 6rem !important;
+  }
+  .inner_Div {
+    width: 100%;
+    margin: 0px 7px;
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    border-radius: 40px;
+  }
+  .inner_Div > input,
+  .inner_Div > button {
+    width: 97%;
+  }
+  .inner_Div > h1 {
+    margin-top: 70px;
+  }
+  .inner_Div > img {
+    height: 180px;
+    width: 230px;
+  }
+}
