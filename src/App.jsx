@@ -20,9 +20,9 @@ function App() {
 
   return loading ? (
     <div className="bg-blue-950	h-screen w-full flex justify-center items-center">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
+      <div className="dot"></div>
+      <div className="dot"></div>
+      <div className="dot"></div>
     </div>
   ) : (
     <BrowserRouter>

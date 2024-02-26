@@ -1,0 +1,16 @@
+@font-face {
+  font-family: "josefinSans";
+  src: url("../assets/fonts/josefinSans.ttf");
+}
+
+.contactListSec{
+  width: 410px;
+}
+
+.contactListSec>header{
+  width: inherit;
+}
+
+.contactListSec > header > div:nth-of-type(2) > input {
+  font-family: "josefinSans", sans-serif;
+}
