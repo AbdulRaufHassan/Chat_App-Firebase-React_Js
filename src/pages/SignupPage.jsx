@@ -3,7 +3,7 @@ import "../css/signin_signup_page.css";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { auth, createUserWithEmailAndPassword } from "../config";
+import { auth, createUserWithEmailAndPassword, db, doc, setDoc } from "../config";
 
 function SignupPage() {
   const {
@@ -16,8 +16,10 @@ function SignupPage() {
 
   const signup = (data) => {
     createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCredential) => {
-        console.log(userCredential);
+      .then(async (userCredential) => {
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+          fullName: data.fullName,
+        });
       })
       .catch((error) => {
         console.log(error.message);
@@ -25,10 +27,12 @@ function SignupPage() {
     reset();
   };
   return (
-    <div className="flex items-center justify-center min-h-screen max-h-fit pt-7 pb-4 signup_main_Div">
+    <div className="flex items-center justify-center min-h-screen max-h-fit pt-7 pb-4 bg-blue-950">
       <div className="bg-gray-50 flex flex-col px-4 pb-4 items-center inner_Div">
         <img src={CHAT_ICON} />
-        <h1 className="text-slate-600 font-black text-5xl h-auto">Signup</h1>
+        <h1 className="text-slate-600 font-black text-5xl h-auto josefin-font">
+          Signup
+        </h1>
         <form onSubmit={handleSubmit(signup)}>
           <input
             type="text"
@@ -57,11 +61,13 @@ function SignupPage() {
           {errors.password && (
             <h6 className="text-red-800	mb-4 mx-4 font-medium">Required</h6>
           )}
-          <button type="submit">Signup</button>
+          <button type="submit" className="josefin-font">
+            Signup
+          </button>
         </form>
         <span className="text-slate-600 mb-5 text-lg">
           Already have an account?
-          <Link to={"/signin"} className="text-indigo-700 ml-2">
+          <Link to={"/signin"} className="text-blue-950 ml-2 josefin-font">
             SignIn
           </Link>
         </span>

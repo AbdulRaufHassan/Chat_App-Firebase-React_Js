@@ -2,21 +2,28 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SignupPage from "./pages/SignupPage";
 import SigninPage from "./pages/SigninPage";
-import { auth, onAuthStateChanged } from "./config/index";
-import { useState } from "react";
+import { auth, db, doc, getDoc, onAuthStateChanged } from "./config/index";
+import { useEffect, useState } from "react";
 import ChatPage from "./pages/ChatPage";
 
 function App() {
   const [userAuthenticated, setUserAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setUserAuthenticated(true);
-    } else {
-      setUserAuthenticated(false);
-    }
-    setLoading(false);
-  });
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const document = await getDoc(docRef);
+        if (document.exists()) {
+        setUserAuthenticated(true);
+      } 
+      } else {
+        setUserAuthenticated(false);
+      }
+      setLoading(false);
+    });
+  }, []);
 
   return loading ? (
     <div className="bg-blue-950	h-screen w-full flex justify-center items-center">

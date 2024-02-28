@@ -3,9 +3,8 @@
   src: url("../assets/fonts/josefinSans.ttf");
 }
 
-.signup_main_Div,
-.signin_main_Div {
-  background-color: rgb(23 37 84);
+.josefin-font{
+  font-family: 'josefinSans',sans-serif !important;
 }
 
 .inner_Div {
@@ -20,7 +19,6 @@
 }
 
 .inner_Div > h1 {
-  font-family: "josefinSans", sans-serif;
   margin: 9px 0px 25px 0px;
 }
 
@@ -55,13 +53,7 @@
   background-color: rgb(23 37 84);
   margin-top: 10px;
   margin-bottom: 15px;
-  font-family: "josefinSans", sans-serif;
   font-size: 25px;
-}
-
-.inner_Div > span > a {
-  font-family: "josefinSans", sans-serif;
-  color: rgb(23 37 84);
 }
 
 @media only screen and (max-width: 520px) {
