@@ -1,41 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import "../css/chatPage.css";
-import { MdGroups, MdPersonAddAlt1 } from "react-icons/md";
-import { Dropdown } from "antd";
-import { auth,signOut } from "../config";
+import { MdGroups } from "react-icons/md";
+import { auth, signOut } from "../config";
+import AddContactModal from "./AddContactModal";
 
 function ContactListSec() {
-  const items = [
-    {
-      key: "1",
-      label: (
-        <a target="_blank" href="#">
-          profile
-        </a>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <a target="_blank" href="#">
-          logout
-        </a>
-      ),
-    },
-  ];
+  const [allContacts, setAllContacts] = useState([]);
+  console.log(allContacts);
 
   return (
     <section className="bg-blue-950 border-r border-gray-400 contactListSec">
       <header className="w-full border-b border-gray-400">
         <div className="w-full bg-slate-300 border-r border-gray-400 p-2 flex items-center justify-between box-border">
-          <div className="h-14 w-14 rounded-full bg-slate-500"></div>
+          <div className="h-14 w-14 rounded-full bg-blue-950"></div>
           <div className="flex items-center">
-            <button className="flex flex-col items-center">
-              <MdPersonAddAlt1 className="text-blue-950 text-3xl" />
-              <h6 className="text-xs text-blue-950 josefin-font">
-                Add Contact
-              </h6>
-            </button>
+            <AddContactModal
+              allContacts={allContacts}
+              setAllContacts={setAllContacts}
+            />
             <button
               className="flex flex-col items-center mx-6"
               onClick={() => signOut(auth)}
@@ -46,24 +28,14 @@ function ContactListSec() {
               </h6>
             </button>
             <div className="mr-5 ml-2">
-              <Dropdown
-                menu={{
-                  items,
-                }}
-                trigger={["click"]}
-                placement="bottomRight"
-                arrow
-                className="cursor-pointer"
-              >
-                <div className="flex flex-col justify-center items-center">
-                  <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
-                  <div
-                    className="h-1.5 w-1.5 rounded-full bg-blue-950"
-                    style={{ margin: "2px 0px" }}
-                  ></div>
-                  <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
-                </div>
-              </Dropdown>
+              <div className="flex flex-col justify-center items-center">
+                <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
+                <div
+                  className="h-1.5 w-1.5 rounded-full bg-blue-950"
+                  style={{ margin: "2px 0px" }}
+                ></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -75,64 +47,31 @@ function ContactListSec() {
           />
         </div>
       </header>
-      <main className="contact_list_scroll">
-        <ul className="contact_list mt-2">
-          <li className="w-full h-20 flex items-center pl-2 pr-4 box-border hover:bg-slate-500">
+      <ul className="contact_list mt-2">
+        {allContacts.map((contact) => (
+          <li
+            key={contact.uid}
+            className="w-full h-20 flex items-center pl-2 pr-4 box-border hover:bg-slate-500"
+          >
             <div className="h-14 w-14 rounded-full bg-slate-300"></div>
             <div className="ml-4 h-full border-t border-slate-500 flex justify-between flex-1">
-              <div className="flex-1 mt-3">
+              <div className="flex-1 mt-4">
                 <h1 className="roboto-font font-semibold text-slate-300 text-xl tracking-wider">
-                  Contact 1
+                  {contact.fullName}
                 </h1>
                 <p className="josefin-font text-gray-400">
                   Lorem, ipsum dolor sit elit...
                 </p>
               </div>
-              <div className="w-auto mt-3">
+              <div className="w-auto mt-4">
                 <span className="inline-block text-gray-400 roboto-font">
                   4:48 PM
                 </span>
               </div>
             </div>
           </li>
-          <li className="w-full h-20 flex items-center pl-2 pr-4 box-border hover:bg-slate-500">
-            <div className="h-14 w-14 rounded-full bg-slate-300"></div>
-            <div className="ml-4 h-full border-t border-slate-500 flex justify-between flex-1">
-              <div className="flex-1 mt-3">
-                <h1 className="roboto-font font-semibold text-slate-300 text-xl tracking-wider">
-                  Contact 1
-                </h1>
-                <p className="josefin-font text-gray-400">
-                  Lorem, ipsum dolor sit elit...
-                </p>
-              </div>
-              <div className="w-auto mt-3">
-                <span className="inline-block text-gray-400 roboto-font">
-                  4:48 PM
-                </span>
-              </div>
-            </div>
-          </li>
-          <li className="w-full h-20 flex items-center pl-2 pr-4 box-border hover:bg-slate-500">
-            <div className="h-14 w-14 rounded-full bg-slate-300"></div>
-            <div className="ml-4 h-full border-t border-slate-500 flex justify-between flex-1">
-              <div className="flex-1 mt-3">
-                <h1 className="roboto-font font-semibold text-slate-300 text-xl tracking-wider">
-                  Contact 1
-                </h1>
-                <p className="josefin-font text-gray-400">
-                  Lorem, ipsum dolor sit elit...
-                </p>
-              </div>
-              <div className="w-auto mt-3">
-                <span className="inline-block text-gray-400 roboto-font">
-                  4:48 PM
-                </span>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </main>
+        ))}
+      </ul>
     </section>
   );
 }

@@ -32,7 +32,7 @@ function SigninPage() {
         <h1 className="text-slate-600 font-black text-5xl h-auto josefin-font">Signin</h1>
         <form onSubmit={handleSubmit(signin)}>
           <input
-            type="text"
+            type="email"
             className={
               errors.email &&
               "border-2 border-red-800 focus:border-2 focus:border-red-800"

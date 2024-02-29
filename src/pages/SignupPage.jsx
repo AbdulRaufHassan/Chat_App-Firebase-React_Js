@@ -3,7 +3,13 @@ import "../css/signin_signup_page.css";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { auth, createUserWithEmailAndPassword, db, doc, setDoc } from "../config";
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  db,
+  doc,
+  setDoc,
+} from "../config";
 
 function SignupPage() {
   const {
@@ -19,6 +25,8 @@ function SignupPage() {
       .then(async (userCredential) => {
         await setDoc(doc(db, "users", userCredential.user.uid), {
           fullName: data.fullName,
+          emailAddress: data.email,
+          uid: auth.currentUser.uid,
         });
       })
       .catch((error) => {
@@ -36,15 +44,30 @@ function SignupPage() {
         <form onSubmit={handleSubmit(signup)}>
           <input
             type="text"
-            className={errors.fullName && "border-2 border-red-800"}
+            className={
+              errors.fullName &&
+              "border-2 border-red-800 focus:border-2 focus:border-red-800"
+            }
             placeholder="Full Name"
-            {...register("fullName", { required: true })}
+            {...register("fullName", {
+              required: "Required",
+              minLength: {
+                value: 4,
+                message: "Full name must be at least 4 characters long",
+              },
+              maxLength: {
+                value: 20,
+                message: "Full name cannot exceed 20 characters",
+              },
+            })}
           />
           {errors.fullName && (
-            <h6 className="text-red-800	mb-4 mx-4 font-medium">Required</h6>
+            <h6 className="text-red-800	mb-4 mx-4 font-medium">
+              {errors.fullName.message}
+            </h6>
           )}
           <input
-            type="text"
+            type="email"
             className={errors.email && "border-2 border-red-800"}
             placeholder="Email"
             {...register("email", { required: true })}
