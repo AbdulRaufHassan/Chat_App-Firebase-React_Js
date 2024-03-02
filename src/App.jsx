@@ -5,6 +5,7 @@ import SigninPage from "./pages/SigninPage";
 import { auth, db, doc, getDoc, onAuthStateChanged } from "./config/index";
 import { useEffect, useState } from "react";
 import ChatPage from "./pages/ChatPage";
+import { Spin } from "antd";
 
 function App() {
   const [userAuthenticated, setUserAuthenticated] = useState(false);
@@ -16,8 +17,8 @@ function App() {
         const docRef = doc(db, "users", user.uid);
         const document = await getDoc(docRef);
         if (document.exists()) {
-        setUserAuthenticated(true);
-      } 
+          setUserAuthenticated(true);
+        }
       } else {
         setUserAuthenticated(false);
       }
@@ -27,9 +28,7 @@ function App() {
 
   return loading ? (
     <div className="bg-blue-950	h-screen w-full flex justify-center items-center">
-      <div className="dot"></div>
-      <div className="dot"></div>
-      <div className="dot"></div>
+      <Spin spinning={setLoading} size="large" fullscreen />
     </div>
   ) : (
     <BrowserRouter>
@@ -43,7 +42,11 @@ function App() {
         <Route
           path="/signin"
           element={
-            userAuthenticated ? <Navigate to={"/chat"} /> : <SigninPage />
+            userAuthenticated ? (
+              <Navigate to={"/chat"} />
+            ) : (
+              <SigninPage />
+            )
           }
         />
         <Route

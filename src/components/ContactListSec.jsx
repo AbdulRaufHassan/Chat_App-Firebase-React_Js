@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import "../css/chatPage.css";
-import { MdGroups } from "react-icons/md";
+import { MdGroups, MdPersonAddAlt1 } from "react-icons/md";
 import { auth, signOut } from "../config";
 import AddContactModal from "./AddContactModal";
 
 function ContactListSec() {
+  const [openModal, setOpenModal] = useState(false);
   const [allContacts, setAllContacts] = useState([]);
-  console.log(allContacts);
 
   return (
     <section className="bg-blue-950 border-r border-gray-400 contactListSec">
@@ -14,7 +14,18 @@ function ContactListSec() {
         <div className="w-full bg-slate-300 border-r border-gray-400 p-2 flex items-center justify-between box-border">
           <div className="h-14 w-14 rounded-full bg-blue-950"></div>
           <div className="flex items-center">
+            <button
+              className="flex flex-col items-center"
+              onClick={() => setOpenModal(true)}
+            >
+              <MdPersonAddAlt1 className="text-blue-950 text-3xl" />
+              <h6 className="text-xs text-blue-950 josefin-font">
+                Add Contact
+              </h6>
+            </button>
             <AddContactModal
+              openModal={openModal}
+              setOpenModal={setOpenModal}
               allContacts={allContacts}
               setAllContacts={setAllContacts}
             />

@@ -1,18 +1,20 @@
-import React, { useState } from "react";
-import { Modal } from "antd";
-import { MdPersonAddAlt1 } from "react-icons/md";
+import React from "react";
+import { Modal, message } from "antd";
 import "../css/chatPage.css";
 import { useForm } from "react-hook-form";
 import { emailRegex } from "../contants";
 import { auth, collection, db, getDocs } from "../config";
 
-function AddContactModal({ allContacts, setAllContacts }) {
-  const [openModal, setOpenModal] = useState(false);
+function AddContactModal({
+  openModal,
+  setOpenModal,
+  allContacts,
+  setAllContacts,
+}) {
   const {
     register,
     handleSubmit,
     reset,
-    clearErrors,
     formState: { errors },
   } = useForm();
 
@@ -23,29 +25,24 @@ function AddContactModal({ allContacts, setAllContacts }) {
         user.data().emailAddress === contactEmail &&
         user.data().uid != auth.currentUser.uid
       ) {
-        console.log(user.data());
+        setOpenModal(false);
         setAllContacts([...allContacts, user.data()]);
+      } else {
+        message.error({
+          type: "error",
+          content: "User not exist",
+        });
       }
     });
-    reset();
   };
 
   const closeModal = () => {
-    clearErrors();
-    reset();
     setOpenModal(false);
+    reset();
   };
 
   return (
     <>
-      <button
-        className="flex flex-col items-center"
-        onClick={() => setOpenModal(true)}
-      >
-        <MdPersonAddAlt1 className="text-blue-950 text-3xl" />
-        <h6 className="text-xs text-blue-950 josefin-font">Add Contact</h6>
-      </button>
-
       <Modal open={openModal} footer={null} onCancel={closeModal}>
         <div>
           <h1 className="roboto-font text-blue-950 font-semibold text-2xl">
@@ -53,7 +50,7 @@ function AddContactModal({ allContacts, setAllContacts }) {
           </h1>
           <form onSubmit={handleSubmit(addContact)}>
             <input
-              type="email"
+              type="text"
               {...register("contactEmail", {
                 required: "Required",
                 pattern: {
@@ -61,11 +58,13 @@ function AddContactModal({ allContacts, setAllContacts }) {
                   message: "Invalid email address",
                 },
               })}
-              className="w-full p-3 mt-4 border border-gray-500 bg-transparent rounded-xl text-xl box-border text-gray-600 placeholder:text-gray-500 focus:outline-none josefin-font"
+              className={`w-full p-3 mt-4 mb-2 bg-white rounded-xl text-xl box-border text-gray-600 placeholder:text-gray-500 focus:outline-none josefin-font autofill_input_bg_white ${
+                errors.contactEmail && "border-2 border-red-800"
+              }`}
               placeholder="Enter Contact Email Address"
             />
             {errors.contactEmail && (
-              <h6 className="text-red-800 mt-2 font-medium">
+              <h6 className="text-red-800 font-semibold text-lg">
                 {errors.contactEmail.message}
               </h6>
             )}
@@ -79,7 +78,6 @@ function AddContactModal({ allContacts, setAllContacts }) {
               <button
                 type="submit"
                 className="py-2 px-4 rounded-lg bg-blue-950 text-white ml-3 roboto-font text-lg"
-                onClick={addContact}
               >
                 Add Contact
               </button>
