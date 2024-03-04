@@ -91,7 +91,7 @@ function SigninPage() {
               ${
                 errors.password
                   ? "border-2 border-red-800 focus:border-2 focus:border-red-800"
-                  : "focus:border-2 border-gray-500"
+                  : "focus:border-2 focus:border-gray-500"
               }
             `}
             placeholder="Password"

@@ -35,10 +35,15 @@
 
 .MessageSec > header {
   height: 72px;
-  box-shadow: 0px 1px 12px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 1px 12px 0px rgba(0, 0, 0, 0.5);
 }
 
 .MessageSec > footer {
   height: 72px;
-  box-shadow: 0px -1px 12px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px -1px 12px 0px rgba(0, 0, 0, 0.5);
+}
+
+.contacts_loading,
+.zeroContactMsg {
+  height: calc(100vh - 160px);
 }

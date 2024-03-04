@@ -37,6 +37,7 @@ function SignupPage() {
           fullName: data.fullName,
           emailAddress: data.email,
           uid: auth.currentUser.uid,
+          contacts: []
         });
       })
       .catch((error) => {
