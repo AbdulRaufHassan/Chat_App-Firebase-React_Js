@@ -36,6 +36,8 @@
 .MessageSec > header {
   height: 72px;
   box-shadow: 0px 1px 12px 0px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1000;
 }
 
 .MessageSec > footer {
@@ -46,4 +48,47 @@
 .contacts_loading,
 .zeroContactMsg {
   height: calc(100vh - 160px);
+}
+
+.msg_style {
+  position: relative;
+  border-radius: 30px;
+  border-bottom-right-radius: 110px;
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+
+.msg_style::before {
+  content: "";
+  height: 99%;
+  width: 30px;
+  background-color: rgb(148 163 184);
+  position: absolute;
+  bottom: 0;
+  right: 0px;
+  border-top-left-radius: 25px;
+}
+
+.msg_style::after {
+  content: "";
+  height: 50%;
+  width: 70px;
+  background-color: rgb(203 213 225);
+  position: absolute;
+  bottom: 0;
+  right: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+.msg_parent_div {
+  height: 150px;
+}
+
+.msg_parent_div > div:nth-of-type(2) {
+  height: inherit;
+}
+
+.allMsgsParentDiv {
+  height: calc(100vh - 144px);
+  overflow: auto !important;
 }

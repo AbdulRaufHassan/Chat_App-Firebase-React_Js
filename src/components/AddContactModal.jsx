@@ -9,13 +9,18 @@ import {
   collection,
   db,
   doc,
-  getDoc,
   getDocs,
-  setDoc,
+  query,
   updateDoc,
+  where,
 } from "../config";
 
-function AddContactModal({ openModal, setOpenModal, setLoading }) {
+function AddContactModal({
+  currentUserDoc,
+  openModal,
+  setOpenModal,
+  setLoading,
+}) {
   const [btnLoading, setBtnLoading] = useState(false);
   const {
     register,
@@ -30,43 +35,49 @@ function AddContactModal({ openModal, setOpenModal, setLoading }) {
   };
 
   const addContact = async ({ contactEmail }) => {
+    message.destroy();
     setBtnLoading(true);
-    const allUsers = await getDocs(collection(db, "users"));
-    let userExist = false;
-    allUsers.forEach(async (user) => {
-      if (
-        user.data().emailAddress === contactEmail &&
-        user.data().uid !== auth.currentUser.uid
-      ) {
-        userExist = true;
-        const currentUserRef = doc(db, `users/${auth.currentUser.uid}`);
-        const currentUserDoc = await getDoc(currentUserRef);
-        if (currentUserDoc.data().contacts.includes(user.data().uid)) {
+    if (contactEmail === auth.currentUser.email) {
+      message.error({
+        type: "error",
+        content: "You cannot add yourself as a contact",
+        duration: 1,
+      });
+    } else {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("emailAddress", "==", contactEmail));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        if (currentUserDoc.contacts.includes(userDoc.data().uid)) {
           message.info({
             type: "info",
-            content: "Contact already added.",
+            content: "Contact already exists",
+            duration: 1,
           });
+          setBtnLoading(false);
         } else {
+          const currentUserRef = doc(db, `users/${auth.currentUser.uid}`);
           await updateDoc(currentUserRef, {
-            contacts: arrayUnion(user.data().uid),
+            contacts: arrayUnion(userDoc.data().uid),
           });
           message.success({
             type: "success",
-            content: "Contact added successfully.",
+            content: "Contact added successfully",
+            duration: 1,
           });
           setLoading(true);
-          setBtnLoading(false)
           closeModal();
         }
+      } else {
+        message.error({
+          type: "error",
+          content: "User does not exist",
+          duration: 1,
+        });
       }
-    });
-
-    if (!userExist) {
-      message.error({
-        type: "error",
-        content: "User does not exist.",
-      });
     }
+    setBtnLoading(false);
   };
 
   return (

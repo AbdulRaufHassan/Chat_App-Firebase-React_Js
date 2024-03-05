@@ -7,7 +7,17 @@ import {
   MdOutlinePhotoLibrary,
   MdSend,
 } from "react-icons/md";
-import { auth, collection, db, doc, getDoc, getDocs, signOut } from "../config";
+import {
+  auth,
+  collection,
+  db,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  signOut,
+  where,
+} from "../config";
 import { Spin } from "antd";
 import AddContactModal from "../components/AddContactModal";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
@@ -15,25 +25,39 @@ import CHAT_ICON from "../assets/images/chat_icon.svg";
 function ChatPage() {
   const [openModal, setOpenModal] = useState(false);
   const [allContacts, setAllContacts] = useState([]);
-  const [currentChat, setCurrentChat] = useState("");
+  const [currentUserDoc, setCurrentUserDoc] = useState({});
+  const [messageInputVal, setMessageInputVal] = useState("");
+  const [allMessages, setAllMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const getAllContacts = async () => {
     const currentUserRef = doc(db, "users", auth.currentUser.uid);
     const currentUserDoc = await getDoc(currentUserRef);
-    const allUsers = await getDocs(collection(db, "users"));
-    let tempArr = [];
-    allUsers.forEach((user) => {
-      if (currentUserDoc.data().contacts.includes(user.data().uid)) {
-        tempArr.push(user.data());
-      }
-    });
+    setCurrentUserDoc(currentUserDoc.data());
+    const contactsQuery = query(
+      collection(db, "users"),
+      where("uid", "in", currentUserDoc.data().contacts)
+    );
+    const querySnapshot = await getDocs(contactsQuery);
+    const tempArr = querySnapshot.docs.map((doc) => doc.data());
     setLoading(false);
     setAllContacts(tempArr);
   };
 
   useEffect(() => {
     getAllContacts();
-  }, [allContacts]);
+    console.log("get contacts render");
+  }, [loading]);
+
+  const sendMsg = () => {
+    setAllMessages([
+      ...allMessages,
+      {
+        message: messageInputVal,
+      },
+    ]);
+    setMessageInputVal("");
+  };
 
   return (
     <div className="w-full min-h-screen max-h-screen overflow-y-hidden flex bg-slate-400">
@@ -52,6 +76,7 @@ function ChatPage() {
                 </h6>
               </button>
               <AddContactModal
+                currentUserDoc={currentUserDoc}
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 setLoading={setLoading}
@@ -140,6 +165,23 @@ function ChatPage() {
                 Contact Name
               </h1>
             </header>
+            <section className="flex flex-col-reverse pt-5 py-10 px-3 box-border allMsgsParentDiv">
+              {allMessages.map((v, i) => (
+                <div className="flex items-end self-end msg_parent_div">
+                  <div
+                    key={i}
+                    className="min-h-32 max-h-fit min-w-60 max-w-fit bg-slate-300 flex justify-center items-center msg_style"
+                  >
+                    <p className="z-50 w-4/5 h-4/5 text-center josefin-font">
+                      {v.message}
+                    </p>
+                  </div>
+                  <div>
+                    <div className="h-14 w-14 rounded-full bg-blue-950"></div>
+                  </div>
+                </div>
+              ))}
+            </section>
             <footer className="w-full bg-slate-300 absolute bottom-0 right-0 flex justify-center items-center">
               <button className="ml-3 mr-6">
                 <MdOutlinePhotoLibrary className="text-4xl text-blue-950" />
@@ -150,10 +192,15 @@ function ChatPage() {
               <input
                 type="text"
                 className="w-9/12 p-3 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font"
+                value={messageInputVal}
+                onChange={(e) => setMessageInputVal(e.target.value)}
                 placeholder="Type a message"
               />
               <div>
-                <button className="p-3 bg-blue-950 rounded-full ml-4 mr-3">
+                <button
+                  className="p-3 bg-blue-950 rounded-full ml-4 mr-3"
+                  onClick={() => sendMsg()}
+                >
                   <MdSend className="text-3xl text-slate-300" />
                 </button>
               </div>
