@@ -20,10 +20,6 @@
   width: 410px;
 }
 
-.contactListSec > header > div:nth-of-type(2) > input {
-  font-family: "josefinSans", sans-serif;
-}
-
 .contact_list > li:nth-of-type(1) > div:nth-of-type(2) {
   border-top: none !important;
 }
@@ -51,37 +47,33 @@
 }
 
 .msg_style {
-  position: relative;
   border-radius: 30px;
-  border-bottom-right-radius: 110px;
-  padding-right: 30px;
-  box-sizing: border-box;
-}
-
-.msg_style::before {
-  content: "";
-  height: 99%;
-  width: 30px;
-  background-color: rgb(148 163 184);
-  position: absolute;
-  bottom: 0;
-  right: 0px;
-  border-top-left-radius: 25px;
+  border-top-right-radius: 0px !important;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .msg_style::after {
   content: "";
-  height: 50%;
-  width: 70px;
+  height: 25px;
+  width: 15px;
   background-color: rgb(203 213 225);
   position: absolute;
-  bottom: 0;
-  right: 30px;
-  border-bottom-right-radius: 30px;
+  top: 0;
+  right: -12px;
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    78% 17%,
+    57% 33%,
+    65% 27%,
+    43% 44%,
+    0% 75%
+  );
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .msg_parent_div {
-  height: 150px;
+  height: 155px;
 }
 
 .msg_parent_div > div:nth-of-type(2) {
