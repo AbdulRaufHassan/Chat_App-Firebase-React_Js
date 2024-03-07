@@ -8,13 +8,17 @@ import {
   MdSend,
 } from "react-icons/md";
 import {
+  addDoc,
   auth,
   collection,
   db,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
+  orderBy,
   query,
+  serverTimestamp,
   signOut,
   where,
 } from "../config";
@@ -45,24 +49,51 @@ function ChatPage() {
     setAllContacts(tempArr);
   };
 
+  const generateChatId = (contactUid) => {
+    let chatId;
+    if (currentUserDoc.uid < contactUid) {
+      chatId = `${currentUserDoc.uid}${contactUid}`;
+    } else {
+      chatId = `${contactUid}${currentUserDoc.uid}`;
+    }
+    return chatId;
+  };
+
+  const sendMsg = async () => {
+    if (messageInputVal.trim()) {
+      await addDoc(collection(db, "messages"), {
+        msg: messageInputVal.trim(),
+        senderId: currentUserDoc.uid,
+        receiverId: currentContact.uid,
+        chatId: generateChatId(currentContact.uid),
+        sendTime: serverTimestamp(),
+      });
+    }
+    setMessageInputVal("");
+  };
+
+  const getAllMessages = () => {
+    const q = query(
+      collection(db, "messages"),
+      where("chatId", "==", generateChatId(currentContact.uid)),
+      orderBy("sendTime", "asc")
+    );
+    onSnapshot(q, (querySnapshot) => {
+      const messages = [];
+      querySnapshot.forEach((doc) => {
+        messages.unshift(doc.data());
+      });
+      setAllMessages(messages);
+    });
+  };
+
   useEffect(() => {
     getAllContacts();
-    console.log("get contacts render");
   }, [loading]);
 
   useEffect(() => {
-    // get messages
+    getAllMessages();
   }, [currentContact]);
-
-  const sendMsg = () => {
-    setAllMessages([
-      ...allMessages,
-      {
-        message: messageInputVal,
-      },
-    ]);
-    setMessageInputVal("");
-  };
 
   return (
     <div className="w-full min-h-screen max-h-screen overflow-y-hidden flex bg-slate-400">
@@ -131,7 +162,7 @@ function ChatPage() {
                 <li
                   key={contact.uid}
                   className={`w-full h-20 flex items-center pl-2 pr-4 box-border cursor-pointer ${
-                    contactIdMatch ? "bg-slate-300" : "hover:bg-slate-500"
+                    contactIdMatch ? "bg-slate-300" : "hover:bg-slate-600"
                   }`}
                   onClick={() => setCurrentContact(contact)}
                 >
@@ -146,7 +177,7 @@ function ChatPage() {
                   </div>
                   <div
                     className={`ml-4 h-full border-t ${
-                      contactIdMatch ? "border-slate-300" : "border-slate-500"
+                      contactIdMatch ? "border-slate-300" : "border-slate-600"
                     } flex justify-between flex-1`}
                   >
                     <div className="flex-1 mt-4">
@@ -205,17 +236,27 @@ function ChatPage() {
             </header>
             <section className="flex flex-col-reverse pt-5 py-10 px-3 box-border allMsgsParentDiv">
               {allMessages.map((v, i) => (
-                <div className="flex items-end self-end msg_parent_div">
+                <div
+                  className={`flex items-end msg_parent_div ${
+                    v.senderId == currentUserDoc.uid
+                      ? "self-end outgoingMsg"
+                      : "self-start incomingMsg"
+                  }`}
+                >
                   <div
                     key={i}
-                    className="relative min-h-32 max-h-fit min-w-60 max-w-fit mr-7 bg-slate-300 flex justify-center items-center msg_style"
+                    className="relative min-h-32 max-h-fit min-w-60 max-w-fit flex justify-center items-center msg_style"
                   >
-                    <p className="z-50 w-4/5 h-4/5 text-center josefin-font">
-                      {v.message}
+                    <p className="z-50 w-4/5 h-4/5 text-center text-lg tracking-wide josefin-font">
+                      {v.msg}
                     </p>
                   </div>
                   <div>
-                    <div className="h-14 w-14 rounded-full bg-blue-950"></div>
+                    <div className="h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold">
+                      {v.senderId == currentUserDoc.uid
+                        ? `${currentUserDoc.fullName?.charAt(0).toUpperCase()}`
+                        : `${currentContact.fullName?.charAt(0).toUpperCase()}`}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -237,7 +278,7 @@ function ChatPage() {
               <div>
                 <button
                   className="p-3 bg-blue-950 rounded-full ml-4 mr-3"
-                  onClick={() => sendMsg()}
+                  onClick={sendMsg}
                 >
                   <MdSend className="text-3xl text-slate-300" />
                 </button>

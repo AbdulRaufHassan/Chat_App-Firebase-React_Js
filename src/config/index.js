@@ -17,6 +17,10 @@ import {
   where,
   updateDoc,
   arrayUnion,
+  addDoc,
+  onSnapshot,
+  serverTimestamp,
+  orderBy
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -48,4 +52,8 @@ export {
   where,
   updateDoc,
   arrayUnion,
+  addDoc,
+  onSnapshot,
+  serverTimestamp,
+  orderBy
 };

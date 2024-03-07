@@ -37,7 +37,7 @@ function AddContactModal({
   const addContact = async ({ contactEmail }) => {
     message.destroy();
     setBtnLoading(true);
-    if (contactEmail === auth.currentUser.email) {
+    if (contactEmail === currentUserDoc.emailAddress) {
       message.error({
         type: "error",
         content: "You cannot add yourself as a contact",
@@ -57,7 +57,7 @@ function AddContactModal({
           });
           setBtnLoading(false);
         } else {
-          const currentUserRef = doc(db, `users/${auth.currentUser.uid}`);
+          const currentUserRef = doc(db, `users/${currentUserDoc.uid}`);
           await updateDoc(currentUserRef, {
             contacts: arrayUnion(userDoc.data().uid),
           });

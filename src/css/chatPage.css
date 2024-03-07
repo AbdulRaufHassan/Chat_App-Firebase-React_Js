@@ -39,6 +39,8 @@
 .MessageSec > footer {
   height: 72px;
   box-shadow: 0px -1px 12px 0px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1000;
 }
 
 .contacts_loading,
@@ -46,20 +48,51 @@
   height: calc(100vh - 160px);
 }
 
+.allMsgsParentDiv {
+  height: calc(100vh - 144px);
+  overflow: auto !important;
+}
+
+.msg_parent_div {
+  height: 157px;
+}
+
+.msg_parent_div > div:nth-of-type(2) {
+  height: inherit;
+}
+
 .msg_style {
   border-radius: 30px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.outgoingMsg > .msg_style {
   border-top-right-radius: 0px !important;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  margin-right: 28px;
+  background-color: rgb(203 213 225);
+}
+
+.outgoingMsg > .msg_style > p {
+  color: rgb(23 37 84);
+}
+
+.incomingMsg > .msg_style > p {
+  color: rgb(203 213 225);
+}
+
+.incomingMsg > .msg_style {
+  border-top-left-radius: 0px !important;
+  margin-left: 28px;
+  background-color: rgb(23 37 84);
 }
 
 .msg_style::after {
   content: "";
   height: 25px;
   width: 15px;
-  background-color: rgb(203 213 225);
   position: absolute;
   top: 0;
-  right: -12px;
   clip-path: polygon(
     0% 0%,
     100% 0%,
@@ -69,18 +102,29 @@
     43% 44%,
     0% 75%
   );
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.msg_parent_div {
-  height: 155px;
+.incomingMsg {
+  flex-direction: row-reverse;
 }
 
-.msg_parent_div > div:nth-of-type(2) {
-  height: inherit;
+.outgoingMsg > .msg_style::after {
+  right: -12px;
+  background-color: rgb(203 213 225);
 }
 
-.allMsgsParentDiv {
-  height: calc(100vh - 144px);
-  overflow: auto !important;
+.incomingMsg > .msg_style::after {
+  left: -12px;
+  transform: rotateY(180deg);
+  background-color: rgb(23 37 84);
+}
+
+.incomingMsg > div:nth-of-type(2) > div {
+  background-color: rgb(203 213 225);
+  color: rgb(23 37 84);
+}
+
+.outgoingMsg > div:nth-of-type(2) > div {
+  background-color: rgb(23 37 84);
+  color: rgb(203 213 225);
 }
