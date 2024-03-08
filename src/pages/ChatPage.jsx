@@ -25,6 +25,7 @@ import {
 import { Spin } from "antd";
 import AddContactModal from "../components/AddContactModal";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
+import EmojiPicker from "emoji-picker-react";
 
 function ChatPage() {
   const [openModal, setOpenModal] = useState(false);
@@ -34,6 +35,7 @@ function ChatPage() {
   const [allMessages, setAllMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentContact, setCurrentContact] = useState({});
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const getAllContacts = async () => {
     const currentUserRef = doc(db, "users", auth.currentUser.uid);
@@ -234,38 +236,58 @@ function ChatPage() {
                 {currentContact.fullName}
               </h1>
             </header>
-            <section className="flex flex-col-reverse pt-5 py-10 px-3 box-border allMsgsParentDiv">
-              {allMessages.map((v, i) => (
-                <div
-                  className={`flex items-end msg_parent_div ${
-                    v.senderId == currentUserDoc.uid
-                      ? "self-end outgoingMsg"
-                      : "self-start incomingMsg"
-                  }`}
-                >
+            <section
+              className={`flex py-10 px-3 box-border allMsgsParentDiv ${
+                allMessages.length
+                  ? "flex-col-reverse"
+                  : "items-center justify-center"
+              }`}
+            >
+              {allMessages.length ? (
+                allMessages.map((v, i) => (
                   <div
                     key={i}
-                    className="relative min-h-32 max-h-fit min-w-60 max-w-fit flex justify-center items-center msg_style"
+                    className={`flex items-end msg_parent_div ${
+                      v.senderId == currentUserDoc.uid
+                        ? "self-end outgoingMsg"
+                        : "self-start incomingMsg"
+                    }`}
                   >
-                    <p className="z-50 w-4/5 h-4/5 text-center text-lg tracking-wide josefin-font">
-                      {v.msg}
-                    </p>
-                  </div>
-                  <div>
-                    <div className="h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold">
-                      {v.senderId == currentUserDoc.uid
-                        ? `${currentUserDoc.fullName?.charAt(0).toUpperCase()}`
-                        : `${currentContact.fullName?.charAt(0).toUpperCase()}`}
+                    <div
+                      key={i}
+                      className="relative min-h-32 max-h-fit min-w-60 max-w-fit flex justify-center items-center msg_style"
+                    >
+                      <p className="z-50 w-4/5 h-4/5 text-center text-lg tracking-wide josefin-font">
+                        {v.msg}
+                      </p>
+                    </div>
+                    <div>
+                      <div className="h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold">
+                        {v.senderId == currentUserDoc.uid
+                          ? `${currentUserDoc.fullName
+                              ?.charAt(0)
+                              .toUpperCase()}`
+                          : `${currentContact.fullName
+                              ?.charAt(0)
+                              .toUpperCase()}`}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <h1 className="text-6xl text-blue-950 font-semibold josefin-font">
+                  Say Hi! 👋
+                </h1>
+              )}
             </section>
             <footer className="w-full bg-slate-300 absolute bottom-0 right-0 flex justify-center items-center">
               <button className="ml-3 mr-6">
                 <MdOutlinePhotoLibrary className="text-4xl text-blue-950" />
               </button>
-              <button className="mr-6">
+              <button
+                className="mr-6"
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              >
                 <MdOutlineEmojiEmotions className="text-4xl text-blue-950" />
               </button>
               <input
@@ -289,6 +311,21 @@ function ChatPage() {
           <div className="flex flex-col items-center">
             <img src={CHAT_ICON} className="h-96 w-96" />
           </div>
+        )}
+        {showEmojiPicker && (
+          <EmojiPicker
+            style={{
+              position: "absolute",
+              bottom: "82px",
+              left: "20px",
+              zIndex: "2000",
+            }}
+            width="350px"
+            height="400px"
+            onEmojiClick={(emojiObject) => {
+              setMessageInputVal(messageInputVal + emojiObject.emoji);
+            }}
+          />
         )}
       </section>
     </div>
