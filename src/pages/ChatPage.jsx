@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../css/chatPage.css";
 import {
   MdGroups,
@@ -19,12 +19,15 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   signOut,
+  updateDoc,
   where,
 } from "../config";
-import { Spin } from "antd";
+import { Spin, message } from "antd";
 import AddContactModal from "../components/AddContactModal";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
+import { FaXmark } from "react-icons/fa6";
 import EmojiPicker from "emoji-picker-react";
 
 function ChatPage() {
@@ -34,8 +37,10 @@ function ChatPage() {
   const [messageInputVal, setMessageInputVal] = useState("");
   const [allMessages, setAllMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [msgsLoading, setMsgsLoading] = useState(true);
   const [currentContact, setCurrentContact] = useState({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  let messageInputRef = useRef();
 
   const getAllContacts = async () => {
     const currentUserRef = doc(db, "users", auth.currentUser.uid);
@@ -75,6 +80,7 @@ function ChatPage() {
   };
 
   const getAllMessages = () => {
+    setMsgsLoading(true);
     const q = query(
       collection(db, "messages"),
       where("chatId", "==", generateChatId(currentContact.uid)),
@@ -85,6 +91,7 @@ function ChatPage() {
       querySnapshot.forEach((doc) => {
         messages.unshift(doc.data());
       });
+      setMsgsLoading(false);
       setAllMessages(messages);
     });
   };
@@ -238,30 +245,45 @@ function ChatPage() {
             </header>
             <section
               className={`flex py-10 px-3 box-border allMsgsParentDiv ${
-                allMessages.length
+                allMessages.length && !msgsLoading
                   ? "flex-col-reverse"
                   : "items-center justify-center"
               }`}
             >
-              {allMessages.length ? (
+              {msgsLoading ? (
+                <Spin size="large" />
+              ) : allMessages.length > 0 ? (
                 allMessages.map((v, i) => (
                   <div
                     key={i}
-                    className={`flex items-end msg_parent_div ${
+                    className={`flex items-end h-fit w-fit my-3 msg_parent_div ${
                       v.senderId == currentUserDoc.uid
                         ? "self-end outgoingMsg"
                         : "self-start incomingMsg"
                     }`}
                   >
-                    <div
-                      key={i}
-                      className="relative min-h-32 max-h-fit min-w-60 max-w-fit flex justify-center items-center msg_style"
-                    >
-                      <p className="z-50 w-4/5 h-4/5 text-center text-lg tracking-wide josefin-font">
-                        {v.msg}
-                      </p>
-                    </div>
                     <div>
+                      <h6
+                        className={`${
+                          v.senderId == currentUserDoc.uid
+                            ? "text-end mr-9"
+                            : "ml-9"
+                        } text-gray-700 roboto-font`}
+                      >
+                        {v.senderId == currentUserDoc.uid
+                          ? "You"
+                          : currentContact.fullName}
+                      </h6>
+                      <div
+                        key={i}
+                        className="relative p-3 box-border min-h-32 max-h-fit min-w-60 max-w-fit flex justify-center items-center msg_style"
+                      >
+                        <p className="z-50 text-center text-lg tracking-wide josefin-font">
+                          {v.msg}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="h-full">
                       <div className="h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold">
                         {v.senderId == currentUserDoc.uid
                           ? `${currentUserDoc.fullName
@@ -286,12 +308,20 @@ function ChatPage() {
               </button>
               <button
                 className="mr-6"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                onClick={() => {
+                  messageInputRef.current.focus();
+                  setShowEmojiPicker(!showEmojiPicker);
+                }}
               >
-                <MdOutlineEmojiEmotions className="text-4xl text-blue-950" />
+                {showEmojiPicker ? (
+                  <FaXmark className="text-4xl text-blue-950" />
+                ) : (
+                  <MdOutlineEmojiEmotions className="text-4xl text-blue-950" />
+                )}
               </button>
               <input
                 type="text"
+                ref={messageInputRef}
                 className="w-9/12 p-3 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font"
                 value={messageInputVal}
                 onChange={(e) => setMessageInputVal(e.target.value)}
@@ -310,6 +340,11 @@ function ChatPage() {
         ) : (
           <div className="flex flex-col items-center">
             <img src={CHAT_ICON} className="h-96 w-96" />
+            <h1 className="text-3xl mt-3 text-gray-600 josefin-font">
+              {allContacts.length > 0
+                ? "Select a user to start a conversation"
+                : "Welcome to my chat app"}
+            </h1>
           </div>
         )}
         {showEmojiPicker && (
@@ -323,7 +358,8 @@ function ChatPage() {
             width="350px"
             height="400px"
             onEmojiClick={(emojiObject) => {
-              setMessageInputVal(messageInputVal + emojiObject.emoji);
+              console.log(emojiObject);
+              setMessageInputVal((prevVal) => prevVal + emojiObject.emoji);
             }}
           />
         )}

@@ -57,31 +57,27 @@
   height: 157px;
 }
 
-.msg_parent_div > div:nth-of-type(2) {
-  height: inherit;
-}
-
 .msg_style {
   border-radius: 30px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
-    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 
-.outgoingMsg > .msg_style {
+.outgoingMsg .msg_style {
   border-top-right-radius: 0px !important;
   margin-right: 28px;
   background-color: rgb(203 213 225);
 }
 
-.outgoingMsg > .msg_style > p {
+.outgoingMsg .msg_style > p {
   color: rgb(23 37 84);
 }
 
-.incomingMsg > .msg_style > p {
+.incomingMsg .msg_style > p {
   color: rgb(203 213 225);
 }
 
-.incomingMsg > .msg_style {
+.incomingMsg .msg_style {
   border-top-left-radius: 0px !important;
   margin-left: 28px;
   background-color: rgb(23 37 84);
@@ -108,23 +104,33 @@
   flex-direction: row-reverse;
 }
 
-.outgoingMsg > .msg_style::after {
+.outgoingMsg .msg_style::after {
   right: -12px;
   background-color: rgb(203 213 225);
 }
 
-.incomingMsg > .msg_style::after {
+.incomingMsg .msg_style::after {
   left: -12px;
   transform: rotateY(180deg);
   background-color: rgb(23 37 84);
 }
 
-.incomingMsg > div:nth-of-type(2) > div {
+.incomingMsg div:nth-of-type(2) > div {
   background-color: rgb(203 213 225);
   color: rgb(23 37 84);
 }
 
-.outgoingMsg > div:nth-of-type(2) > div {
+.outgoingMsg div:nth-of-type(2) > div {
   background-color: rgb(23 37 84);
   color: rgb(203 213 225);
+}
+
+.MessageSec > section::-webkit-scrollbar {
+  background: transparent !important;
+  width: 8px !important;
+}
+
+.MessageSec > section::-webkit-scrollbar-thumb {
+  background: rgb(23 37 84) !important;
+  border-radius: 15px;
 }

@@ -26,3 +26,7 @@ button:disabled {
 .autofill_input_bg_white:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset;
 }
+
+.MessageSec > section .ant-spin-dot-item {
+  background-color: rgb(23 37 84) !important;
+}
