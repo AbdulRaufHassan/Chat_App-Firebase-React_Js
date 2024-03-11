@@ -1,12 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../css/chatPage.css";
-import {
-  MdGroups,
-  MdPersonAddAlt1,
-  MdOutlineEmojiEmotions,
-  MdOutlinePhotoLibrary,
-  MdSend,
-} from "react-icons/md";
+import { MdGroups, MdPersonAddAlt1 } from "react-icons/md";
 import {
   addDoc,
   auth,
@@ -19,19 +13,17 @@ import {
   orderBy,
   query,
   serverTimestamp,
-  setDoc,
   signOut,
-  updateDoc,
   where,
 } from "../config";
-import { Spin, message } from "antd";
 import AddContactModal from "../components/AddContactModal";
-import CHAT_ICON from "../assets/images/chat_icon.svg";
-import { FaXmark } from "react-icons/fa6";
-import EmojiPicker from "emoji-picker-react";
+import ContactList from "../components/ContactList.jsx";
+import ChatSection from "../components/ChatSection.jsx";
+import CreateGroupModal from "../components/CreateGroupModal.jsx";
 
 function ChatPage() {
   const [openModal, setOpenModal] = useState(false);
+  const [openGroupModal, setOpenGroupModal] = useState(false);
   const [allContacts, setAllContacts] = useState([]);
   const [currentUserDoc, setCurrentUserDoc] = useState({});
   const [messageInputVal, setMessageInputVal] = useState("");
@@ -40,20 +32,24 @@ function ChatPage() {
   const [msgsLoading, setMsgsLoading] = useState(true);
   const [currentContact, setCurrentContact] = useState({});
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  let messageInputRef = useRef();
 
   const getAllContacts = async () => {
     const currentUserRef = doc(db, "users", auth.currentUser.uid);
     const currentUserDoc = await getDoc(currentUserRef);
     setCurrentUserDoc(currentUserDoc.data());
-    const contactsQuery = query(
-      collection(db, "users"),
-      where("uid", "in", currentUserDoc.data().contacts)
-    );
-    const querySnapshot = await getDocs(contactsQuery);
-    const tempArr = querySnapshot.docs.map((doc) => doc.data());
-    setLoading(false);
-    setAllContacts(tempArr);
+    if (currentUserDoc.data().contacts.length > 0) {
+      const contactsQuery = query(
+        collection(db, "users"),
+        where("uid", "in", currentUserDoc.data().contacts)
+      );
+      const querySnapshot = await getDocs(contactsQuery);
+      const tempArr = querySnapshot.docs.map((doc) => doc.data());
+      setLoading(false);
+      setAllContacts(tempArr);
+    } else {
+      setLoading(false);
+      setAllContacts([]);
+    }
   };
 
   const generateChatId = (contactUid) => {
@@ -130,23 +126,29 @@ function ChatPage() {
               />
               <button
                 className="flex flex-col items-center mx-6"
-                onClick={() => signOut(auth)}
+                onClick={() => setOpenGroupModal(true)}
               >
                 <MdGroups className="text-blue-950 text-3xl" />
                 <h6 className="text-xs text-blue-950 josefin-font">
                   Create Group
                 </h6>
               </button>
-              <div className="mr-5 ml-2">
-                <div className="flex flex-col justify-center items-center">
-                  <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
-                  <div
-                    className="h-1.5 w-1.5 rounded-full bg-blue-950"
-                    style={{ margin: "2px 0px" }}
-                  ></div>
-                  <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
+              <CreateGroupModal
+                openGroupModal={openGroupModal}
+                setOpenGroupModal={setOpenGroupModal}
+              />
+              <button onClick={() => signOut(auth)}>
+                <div className="mr-5 ml-2">
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
+                    <div
+                      className="h-1.5 w-1.5 rounded-full bg-blue-950"
+                      style={{ margin: "2px 0px" }}
+                    ></div>
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-950"></div>
+                  </div>
                 </div>
-              </div>
+              </button>
             </div>
           </div>
           {allContacts.length > 0 && (
@@ -159,211 +161,25 @@ function ChatPage() {
             </div>
           )}
         </header>
-        {loading ? (
-          <div className="w-full flex items-center justify-center contacts_loading">
-            <Spin size="large" />
-          </div>
-        ) : allContacts.length ? (
-          <ul className="contact_list mt-2">
-            {allContacts.map((contact) => {
-              let contactIdMatch = currentContact.uid == contact.uid;
-              return (
-                <li
-                  key={contact.uid}
-                  className={`w-full h-20 flex items-center pl-2 pr-4 box-border cursor-pointer ${
-                    contactIdMatch ? "bg-slate-300" : "hover:bg-slate-600"
-                  }`}
-                  onClick={() => setCurrentContact(contact)}
-                >
-                  <div
-                    className={`h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold ${
-                      contactIdMatch
-                        ? "bg-blue-950 text-slate-300"
-                        : "bg-slate-300 text-blue-950"
-                    }`}
-                  >
-                    {contact.fullName?.charAt(0).toUpperCase()}
-                  </div>
-                  <div
-                    className={`ml-4 h-full border-t ${
-                      contactIdMatch ? "border-slate-300" : "border-slate-600"
-                    } flex justify-between flex-1`}
-                  >
-                    <div className="flex-1 mt-4">
-                      <h1
-                        className={`roboto-font font-semibold ${
-                          contactIdMatch ? "text-blue-950" : "text-slate-300"
-                        } text-xl tracking-wider`}
-                      >
-                        {contact.fullName}
-                      </h1>
-                      <p
-                        className={`josefin-font ${
-                          contactIdMatch ? "text-gray-500" : "text-gray-400"
-                        }`}
-                      >
-                        Lorem, ipsum dolor sit elit...
-                      </p>
-                    </div>
-                    <div className="w-auto mt-4">
-                      <span
-                        className={`inline-block ${
-                          contactIdMatch ? "text-gray-500" : "text-gray-400"
-                        } roboto-font`}
-                      >
-                        4:48 PM
-                      </span>
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className="w-4/5 mx-auto flex flex-col justify-center items-center text-xl josefin-font text-slate-300 zeroContactMsg">
-            <p>You have no contact</p>
-            <p>Add contact to start chatting</p>
-          </div>
-        )}
+        <ContactList
+          loading={loading}
+          allContacts={allContacts}
+          currentContact={currentContact}
+          setCurrentContact={setCurrentContact}
+        />
       </section>
-      <section
-        className={`${
-          Object.keys(currentContact).length
-            ? "bg-slate-400"
-            : "bg-slate-300 flex justify-center items-center"
-        } flex-1 MessageSec relative`}
-      >
-        {Object.keys(currentContact).length > 0 ? (
-          <>
-            <header className="w-full bg-slate-300 flex items-center">
-              <div className="h-14 w-14 rounded-full bg-blue-950 ml-4 mr-3 flex items-center justify-center text-slate-300 roboto-font text-2xl font-semibold">
-                {currentContact.fullName?.charAt(0).toUpperCase()}
-              </div>
-              <h1 className="roboto-font font-semibold text-blue-950 text-xl tracking-wider">
-                {currentContact.fullName}
-              </h1>
-            </header>
-            <section
-              className={`flex py-10 px-3 box-border allMsgsParentDiv ${
-                allMessages.length && !msgsLoading
-                  ? "flex-col-reverse"
-                  : "items-center justify-center"
-              }`}
-            >
-              {msgsLoading ? (
-                <Spin size="large" />
-              ) : allMessages.length > 0 ? (
-                allMessages.map((v, i) => (
-                  <div
-                    key={i}
-                    className={`flex items-end h-fit w-fit my-3 msg_parent_div ${
-                      v.senderId == currentUserDoc.uid
-                        ? "self-end outgoingMsg"
-                        : "self-start incomingMsg"
-                    }`}
-                  >
-                    <div>
-                      <h6
-                        className={`${
-                          v.senderId == currentUserDoc.uid
-                            ? "text-end mr-9"
-                            : "ml-9"
-                        } text-gray-700 roboto-font`}
-                      >
-                        {v.senderId == currentUserDoc.uid
-                          ? "You"
-                          : currentContact.fullName}
-                      </h6>
-                      <div
-                        key={i}
-                        className="relative p-3 box-border min-h-32 max-h-fit min-w-60 max-w-fit flex justify-center items-center msg_style"
-                      >
-                        <p className="z-50 text-center text-lg tracking-wide josefin-font">
-                          {v.msg}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="h-full">
-                      <div className="h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold">
-                        {v.senderId == currentUserDoc.uid
-                          ? `${currentUserDoc.fullName
-                              ?.charAt(0)
-                              .toUpperCase()}`
-                          : `${currentContact.fullName
-                              ?.charAt(0)
-                              .toUpperCase()}`}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <h1 className="text-6xl text-blue-950 font-semibold josefin-font">
-                  Say Hi! 👋
-                </h1>
-              )}
-            </section>
-            <footer className="w-full bg-slate-300 absolute bottom-0 right-0 flex justify-center items-center">
-              <button className="ml-3 mr-6">
-                <MdOutlinePhotoLibrary className="text-4xl text-blue-950" />
-              </button>
-              <button
-                className="mr-6"
-                onClick={() => {
-                  messageInputRef.current.focus();
-                  setShowEmojiPicker(!showEmojiPicker);
-                }}
-              >
-                {showEmojiPicker ? (
-                  <FaXmark className="text-4xl text-blue-950" />
-                ) : (
-                  <MdOutlineEmojiEmotions className="text-4xl text-blue-950" />
-                )}
-              </button>
-              <input
-                type="text"
-                ref={messageInputRef}
-                className="w-9/12 p-3 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font"
-                value={messageInputVal}
-                onChange={(e) => setMessageInputVal(e.target.value)}
-                placeholder="Type a message"
-              />
-              <div>
-                <button
-                  className="p-3 bg-blue-950 rounded-full ml-4 mr-3"
-                  onClick={sendMsg}
-                >
-                  <MdSend className="text-3xl text-slate-300" />
-                </button>
-              </div>
-            </footer>
-          </>
-        ) : (
-          <div className="flex flex-col items-center">
-            <img src={CHAT_ICON} className="h-96 w-96" />
-            <h1 className="text-3xl mt-3 text-gray-600 josefin-font">
-              {allContacts.length > 0
-                ? "Select a user to start a conversation"
-                : "Welcome to my chat app"}
-            </h1>
-          </div>
-        )}
-        {showEmojiPicker && (
-          <EmojiPicker
-            style={{
-              position: "absolute",
-              bottom: "82px",
-              left: "20px",
-              zIndex: "2000",
-            }}
-            width="350px"
-            height="400px"
-            onEmojiClick={(emojiObject) => {
-              console.log(emojiObject);
-              setMessageInputVal((prevVal) => prevVal + emojiObject.emoji);
-            }}
-          />
-        )}
-      </section>
+      <ChatSection
+        allContacts={allContacts}
+        currentContact={currentContact}
+        currentUserDoc={currentUserDoc}
+        showEmojiPicker={showEmojiPicker}
+        setShowEmojiPicker={setShowEmojiPicker}
+        allMessages={allMessages}
+        msgsLoading={msgsLoading}
+        messageInputVal={messageInputVal}
+        setMessageInputVal={setMessageInputVal}
+        sendMsg={sendMsg}
+      />
     </div>
   );
 }
