@@ -16,6 +16,41 @@
   font-family: "roboto", sans-serif !important;
 }
 
+.ant-tabs-top > .ant-tabs-nav::before {
+  border: none;
+}
+
+.ant-tabs-nav {
+  margin: 0px !important;
+}
+
+.ant-tabs-nav .ant-tabs-tab .ant-tabs-tab-btn {
+  color: rgb(156 163 175) !important;
+  font-size: large;
+  font-family: "roboto", sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: rgb(203 213 225) !important;
+}
+
+.ant-tabs-nav .ant-tabs-ink-bar.ant-tabs-ink-bar-animated {
+  background-color: rgb(203 213 225) !important;
+}
+
+.ant-tabs-nav-list {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.ant-tabs-tab {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  margin: 0px !important;
+}
+
 .contactListSec {
   width: 410px;
 }
@@ -133,4 +168,28 @@
 .MessageSec > section::-webkit-scrollbar-thumb {
   background: rgb(23 37 84) !important;
   border-radius: 15px;
+}
+
+.ant-select-selection-item {
+  height: fit-content !important;
+  padding: 5px !important;
+}
+
+.ant-select-selector {
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+}
+
+.ant-select-selector::placeholder {
+  color: rgb(107 114 128) !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border: 2px solid rgb(107 114 128) !important;
+  box-shadow: none !important;
+}
+
+.red_membersSelect_border .ant-select-selector {
+  border: 2px solid rgb(153 27 27) !important;
 }

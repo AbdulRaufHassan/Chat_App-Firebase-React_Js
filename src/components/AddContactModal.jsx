@@ -25,13 +25,13 @@ function AddContactModal({
   const {
     register,
     handleSubmit,
-    reset,
+    clearErrors,
     formState: { errors },
   } = useForm();
 
   const closeModal = () => {
+    clearErrors();
     setOpenModal(false);
-    reset();
   };
 
   const addContact = async ({ contactEmail }) => {
@@ -96,7 +96,7 @@ function AddContactModal({
                 message: "Invalid email address",
               },
             })}
-            className={`w-full p-3 mt-4 mb-2 bg-white rounded-xl text-xl box-border text-gray-600 placeholder:text-gray-500 focus:outline-none josefin-font autofill_input_bg_white ${
+            className={`w-full p-3 mt-4 mb-1 bg-white rounded-xl text-xl box-border text-gray-600 placeholder:text-gray-500 focus:outline-none josefin-font autofill_input_bg_white ${
               errors.contactEmail
                 ? "border-2 border-red-800 focus:border-2 focus:border-red-800"
                 : "focus:border-2 focus:border-gray-500"
@@ -121,7 +121,7 @@ function AddContactModal({
               disabled={btnLoading}
               className="py-2 w-32 rounded-lg bg-blue-950 text-white ml-3 roboto-font text-lg"
             >
-              {btnLoading ? <Spin /> : "Add Contact"}
+              {btnLoading ? <Spin /> : "Add"}
             </button>
           </div>
         </form>
