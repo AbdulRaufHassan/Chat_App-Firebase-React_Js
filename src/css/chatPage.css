@@ -55,13 +55,27 @@
   width: 410px;
 }
 
-.contact_list > li:nth-of-type(1) > div:nth-of-type(2) {
+.contact_list > li:nth-of-type(1) > div:nth-of-type(2),
+.groups_list > li:nth-of-type(1) > div:nth-of-type(2) {
   border-top: none !important;
 }
 
-.contact_list {
+.contact_list,
+.groups_list {
   height: calc(100vh - 135px);
   overflow: auto !important;
+}
+
+.contact_list::-webkit-scrollbar,
+.groups_list::-webkit-scrollbar {
+  background: transparent !important;
+  width: 8px !important;
+}
+
+.contact_list::-webkit-scrollbar-thumb,
+.groups_list::-webkit-scrollbar-thumb {
+  background: rgb(203 213 225) !important;
+  border-radius: 15px;
 }
 
 .MessageSec > header {
@@ -79,6 +93,7 @@
 }
 
 .contacts_loading,
+.groups_loading,
 .zeroContactMsg {
   height: calc(100vh - 160px);
 }

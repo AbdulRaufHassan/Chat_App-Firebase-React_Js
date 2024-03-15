@@ -1,10 +1,22 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../css/chatPage.css";
 import {
   MdOutlineEmojiEmotions,
   MdOutlinePhotoLibrary,
   MdSend,
 } from "react-icons/md";
+import {
+  addDoc,
+  collection,
+  db,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy,
+  where,
+  updateDoc,
+  doc,
+} from "../config";
 import { Spin } from "antd";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { FaXmark } from "react-icons/fa6";
@@ -13,33 +25,106 @@ import EmojiPicker from "emoji-picker-react";
 function ChatSection({
   allContacts,
   currentContact,
-  allMessages,
-  msgsLoading,
   currentUserDoc,
-  showEmojiPicker,
-  setShowEmojiPicker,
-  messageInputVal,
-  setMessageInputVal,
-  sendMsg,
+  currentGroup,
 }) {
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [messageInputVal, setMessageInputVal] = useState("");
+  const [msgsLoading, setMsgsLoading] = useState(true);
+  const [allMessages, setAllMessages] = useState([]);
   let messageInputRef = useRef();
+  let isContact = currentContact?.uid;
+  let isGroup = currentGroup?.groupId;
+
+  const generateChatId = (contactUid) => {
+    let chatId;
+    if (currentUserDoc.uid < contactUid) {
+      chatId = `${currentUserDoc.uid}${contactUid}`;
+    } else {
+      chatId = `${contactUid}${currentUserDoc.uid}`;
+    }
+    return chatId;
+  };
+
+  const sendMsg = async () => {
+    if (messageInputVal.trim()) {
+      if (isContact) {
+        await addDoc(collection(db, "messages"), {
+          msg: messageInputVal.trim(),
+          senderId: currentUserDoc.uid,
+          receiverId: currentContact.uid,
+          chatId: generateChatId(currentContact.uid),
+          sendTime: serverTimestamp(),
+        });
+        await updateDoc(doc(db, "users", currentUserDoc.uid), {
+          lastMsg: messageInputVal.trim(),
+        });
+      } else {
+        await addDoc(collection(db, "groupMessages"), {
+          msg: messageInputVal.trim(),
+          senderId: currentUserDoc.uid,
+          senderFullName: currentUserDoc.fullName,
+          groupId: currentGroup.groupId,
+          sendTime: serverTimestamp(),
+        });
+      }
+    }
+    setMessageInputVal("");
+  };
+
+  const getAllMessages = () => {
+    setMsgsLoading(true);
+    let q;
+    if (isContact && currentContact.uid) {
+      q = query(
+        collection(db, "messages"),
+        where("chatId", "==", generateChatId(currentContact.uid)),
+        orderBy("sendTime", "asc")
+      );
+    } else if (isGroup && currentGroup.groupId) {
+      q = query(
+        collection(db, "groupMessages"),
+        where("groupId", "==", currentGroup.groupId),
+        orderBy("sendTime", "asc")
+      );
+    } else {
+      setAllMessages([]);
+      setMsgsLoading(false);
+      return;
+    }
+
+    onSnapshot(q, (querySnapshot) => {
+      const messages = [];
+      querySnapshot.forEach((doc) => {
+        messages.unshift(doc.data());
+      });
+      setMsgsLoading(false);
+      setAllMessages(messages);
+    });
+  };
+
+  useEffect(() => {
+    getAllMessages();
+  }, [currentContact, currentGroup]);
 
   return (
     <section
       className={`${
-        Object.keys(currentContact).length
+        isContact || isGroup
           ? "bg-slate-400"
           : "bg-slate-300 flex justify-center items-center"
       } flex-1 MessageSec relative`}
     >
-      {Object.keys(currentContact).length > 0 ? (
+      {isContact || isGroup ? (
         <>
           <header className="w-full bg-slate-300 flex items-center">
             <div className="h-14 w-14 rounded-full bg-blue-950 ml-4 mr-3 flex items-center justify-center text-slate-300 roboto-font text-2xl font-semibold">
-              {currentContact.fullName?.charAt(0).toUpperCase()}
+              {isContact
+                ? currentContact.fullName?.charAt(0).toUpperCase()
+                : currentGroup.groupName?.charAt(0).toUpperCase()}
             </div>
             <h1 className="roboto-font font-semibold text-blue-950 text-xl tracking-wider">
-              {currentContact.fullName}
+              {isContact ? currentContact.fullName : currentGroup.groupName}
             </h1>
           </header>
           <section
@@ -69,9 +154,13 @@ function ChatSection({
                           : "ml-9"
                       } text-gray-700 roboto-font`}
                     >
-                      {v.senderId == currentUserDoc.uid
+                      {isContact
+                        ? v.senderId == currentUserDoc.uid
+                          ? "You"
+                          : currentContact.fullName
+                        : v.senderId == currentUserDoc.uid
                         ? "You"
-                        : currentContact.fullName}
+                        : v.senderFullName}
                     </h6>
                     <div
                       key={i}
@@ -84,9 +173,11 @@ function ChatSection({
                   </div>
                   <div className="h-full">
                     <div className="h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold">
-                      {v.senderId == currentUserDoc.uid
-                        ? `${currentUserDoc.fullName?.charAt(0).toUpperCase()}`
-                        : `${currentContact.fullName?.charAt(0).toUpperCase()}`}
+                      {isContact
+                        ? v.senderId == currentUserDoc.uid
+                          ? currentUserDoc.fullName?.charAt(0).toUpperCase()
+                          : currentContact.fullName?.charAt(0).toUpperCase()
+                        : v.senderFullName?.charAt(0).toUpperCase()}
                     </div>
                   </div>
                 </div>
@@ -98,26 +189,23 @@ function ChatSection({
             )}
           </section>
           <footer className="w-full bg-slate-300 absolute bottom-0 right-0 flex justify-center items-center">
-            <button className="ml-3 mr-6">
-              <MdOutlinePhotoLibrary className="text-4xl text-blue-950" />
-            </button>
             <button
-              className="mr-6"
+              className="mr-4"
               onClick={() => {
                 messageInputRef.current.focus();
                 setShowEmojiPicker(!showEmojiPicker);
               }}
             >
               {showEmojiPicker ? (
-                <FaXmark className="text-4xl text-blue-950" />
+                <FaXmark className="text-4xl text-blue-950 ml-3" />
               ) : (
-                <MdOutlineEmojiEmotions className="text-4xl text-blue-950" />
+                <MdOutlineEmojiEmotions className="text-4xl text-blue-950 ml-3" />
               )}
             </button>
             <input
               type="text"
               ref={messageInputRef}
-              className="w-9/12 p-3 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font"
+              className="flex-1 p-3 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font"
               value={messageInputVal}
               onChange={(e) => setMessageInputVal(e.target.value)}
               placeholder="Type a message"

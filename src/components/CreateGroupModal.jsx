@@ -1,10 +1,20 @@
 import { Modal, Select } from "antd";
 import React, { useState } from "react";
 import "../css/chatPage.css";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { whiteSpaceRegex } from "../contants";
+import { v4 as uuidv4 } from "uuid";
+import { addDoc, collection, db } from "../config";
 
-function CreateGroupModal({ openGroupModal, setOpenGroupModal, allContacts }) {
+function CreateGroupModal({
+  openGroupModal,
+  setOpenGroupModal,
+  allContacts,
+  currentUserDoc,
+  setGroupListLoading,
+}) {
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [showValidationMsg, setShowValidationMsg] = useState(false);
   const {
     register,
     handleSubmit,
@@ -14,6 +24,8 @@ function CreateGroupModal({ openGroupModal, setOpenGroupModal, allContacts }) {
 
   const closeModal = () => {
     clearErrors();
+    setSelectedMembers([]);
+    setShowValidationMsg(false);
     setOpenGroupModal(false);
   };
 
@@ -29,11 +41,27 @@ function CreateGroupModal({ openGroupModal, setOpenGroupModal, allContacts }) {
     ),
   }));
 
-  const handleChange = (value) => {
-    console.log(value);
+  let clickedCreateBtn = false;
+  const handleChange = (selectedValues) => {
+    setSelectedMembers(selectedValues);
+    clickedCreateBtn && setShowValidationMsg(selectedMembers.length + 1 < 2);
   };
 
-  const createGroup = () => {};
+  const createGroup = async ({ groupName }) => {
+    clickedCreateBtn = true;
+    if (selectedMembers.length > 1) {
+      await addDoc(collection(db, "groups"), {
+        groupName: groupName,
+        groupId: uuidv4(),
+        adminUID: currentUserDoc.uid,
+        members: [currentUserDoc.uid, ...selectedMembers],
+      });
+      setGroupListLoading(true);
+      closeModal();
+    } else {
+      setShowValidationMsg(true);
+    }
+  };
 
   return (
     <Modal open={openGroupModal} footer={null} onCancel={closeModal}>
@@ -71,28 +99,25 @@ function CreateGroupModal({ openGroupModal, setOpenGroupModal, allContacts }) {
               {errors.groupName.message}
             </h6>
           )}
+
           <Select
             mode="multiple"
             size="middle"
             placeholder="Select Members"
             showSearch={false}
             onChange={handleChange}
-            className={`text-xl text-gray-600 mt-3 font-semibold josefin-font ${errors.selectedContacts && 'red_membersSelect_border'}`}
+            className={`text-xl text-gray-600 mt-3 font-semibold josefin-font ${
+              showValidationMsg && "red_membersSelect_border"
+            }`}
             style={{
               width: "100%",
               height: "60px",
             }}
             options={options}
-            {...register("selectedContacts", {
-              validate: {
-                minContacts: (value) =>
-                  (value && value.length >= 2) || "Select at least 2 members",
-              },
-            })}
           />
-          {errors.selectedContacts && (
+          {showValidationMsg && (
             <h6 className="text-red-800 font-semibold text-lg mt-1">
-              {errors.selectedContacts.message}
+              Select at least two members
             </h6>
           )}
           <div className="w-full flex justify-end mt-5">
