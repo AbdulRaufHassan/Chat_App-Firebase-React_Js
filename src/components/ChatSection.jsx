@@ -16,6 +16,7 @@ import {
   where,
   updateDoc,
   doc,
+  arrayUnion,
 } from "../config";
 import { Spin } from "antd";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
@@ -27,6 +28,7 @@ function ChatSection({
   currentContact,
   currentUserDoc,
   currentGroup,
+  generateChatId,
 }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [messageInputVal, setMessageInputVal] = useState("");
@@ -36,19 +38,15 @@ function ChatSection({
   let isContact = currentContact?.uid;
   let isGroup = currentGroup?.groupId;
 
-  const generateChatId = (contactUid) => {
-    let chatId;
-    if (currentUserDoc.uid < contactUid) {
-      chatId = `${currentUserDoc.uid}${contactUid}`;
-    } else {
-      chatId = `${contactUid}${currentUserDoc.uid}`;
-    }
-    return chatId;
-  };
-
   const sendMsg = async () => {
+    setMessageInputVal("");
     if (messageInputVal.trim()) {
       if (isContact) {
+        if (!currentContact.contacts.includes(currentUserDoc.uid)) {
+          await updateDoc(doc(db, "users", currentContact.uid), {
+            contacts: arrayUnion(currentUserDoc.uid),
+          });
+        }
         await addDoc(collection(db, "messages"), {
           msg: messageInputVal.trim(),
           senderId: currentUserDoc.uid,
@@ -57,7 +55,18 @@ function ChatSection({
           sendTime: serverTimestamp(),
         });
         await updateDoc(doc(db, "users", currentUserDoc.uid), {
-          lastMsg: messageInputVal.trim(),
+          [`lastMessages.${generateChatId(currentContact.uid)}`]: {
+            lastMessage: messageInputVal.trim(),
+            chatId: generateChatId(currentContact.uid),
+            senderUid: currentUserDoc.uid,
+          },
+        });
+        await updateDoc(doc(db, "users", currentContact.uid), {
+          [`lastMessages.${generateChatId(currentContact.uid)}`]: {
+            lastMessage: messageInputVal.trim(),
+            chatId: generateChatId(currentContact.uid),
+            senderUid: currentUserDoc.uid,
+          },
         });
       } else {
         await addDoc(collection(db, "groupMessages"), {
@@ -67,9 +76,14 @@ function ChatSection({
           groupId: currentGroup.groupId,
           sendTime: serverTimestamp(),
         });
+        await updateDoc(doc(db, "groups", currentGroup.groupId), {
+          lastMessage: {
+            lastMessage: messageInputVal.trim(),
+            senderUid: currentUserDoc.uid,
+          },
+        });
       }
     }
-    setMessageInputVal("");
   };
 
   const getAllMessages = () => {
@@ -107,6 +121,7 @@ function ChatSection({
     getAllMessages();
   }, [currentContact, currentGroup]);
 
+  messageInputRef && messageInputRef.current && messageInputRef.current.focus();
   return (
     <section
       className={`${
@@ -164,11 +179,24 @@ function ChatSection({
                     </h6>
                     <div
                       key={i}
-                      className="relative p-3 box-border min-h-32 max-h-fit min-w-60 max-w-fit flex justify-center items-center msg_style"
+                      className="relative px-3 pt-3 pb-6 box-border min-h-32 max-h-fit min-w-60 max-w-fit flex flex-col justify-center items-center msg_style"
                     >
-                      <p className="z-50 text-center text-lg tracking-wide josefin-font">
+                      <p className="z-50 mt-3 text-center text-lg tracking-wide josefin-font">
                         {v.msg}
                       </p>
+                      <div
+                        className={`absolute bottom-1 right-4 text-sm roboto-font sendTime`}
+                      >
+                        {v.sendTime &&
+                          new Date(v.sendTime?.toDate()).toLocaleTimeString(
+                            [],
+                            {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )}
+                      </div>
                     </div>
                   </div>
                   <div className="h-full">

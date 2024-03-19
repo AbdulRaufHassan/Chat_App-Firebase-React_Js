@@ -36,8 +36,9 @@ function ChatPage() {
 
   const getCurrentUser = async () => {
     const currentUserRef = doc(db, "users", auth.currentUser.uid);
-    const currentUserDoc = await getDoc(currentUserRef);
-    setCurrentUserDoc(currentUserDoc.data());
+    onSnapshot(currentUserRef, (doc) => {
+      setCurrentUserDoc(doc.data());
+    });
   };
 
   const getAllContacts = async () => {
@@ -46,7 +47,7 @@ function ChatPage() {
         collection(db, "users"),
         where("uid", "in", currentUserDoc.contacts)
       );
-      const unsubscribe = onSnapshot(contactsQuery, (querySnapshot) => {
+      onSnapshot(contactsQuery, (querySnapshot) => {
         const tempArr = [];
         querySnapshot.forEach((doc) => {
           tempArr.push(doc.data());
@@ -54,23 +55,23 @@ function ChatPage() {
         setAllContacts(tempArr);
         setLoading(false);
       });
-      return unsubscribe;
     } else {
       setLoading(false);
       setAllContacts([]);
     }
   };
-  
+
   const getAllGroups = async () => {
     if (currentUserDoc.contacts.length > 0) {
       const groupsQuery = query(
         collection(db, "groups"),
         where("members", "array-contains", currentUserDoc.uid)
       );
-      const querySnapshot = await getDocs(groupsQuery);
-      const tempArr = querySnapshot.docs.map((doc) => doc.data());
-      setGroupListLoading(false);
-      setAllGroups(tempArr);
+      onSnapshot(groupsQuery, (querySnapshot) => {
+        const tempArr = querySnapshot.docs.map((doc) => doc.data());
+        setAllGroups(tempArr);
+        setGroupListLoading(false);
+      });
     } else {
       setGroupListLoading(false);
       setAllGroups([]);
@@ -82,16 +83,26 @@ function ChatPage() {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(currentUserDoc).length) {
+    if (currentUserDoc?.uid) {
       getAllContacts();
     }
-  }, [loading, currentUserDoc]);
+  }, [currentUserDoc]);
 
   useEffect(() => {
-    if (Object.keys(currentUserDoc).length) {
+    if (currentUserDoc?.uid) {
       getAllGroups();
     }
   }, [groupListLoading, currentUserDoc]);
+
+  const generateChatId = (contactUid) => {
+    let chatId;
+    if (currentUserDoc.uid < contactUid) {
+      chatId = `${currentUserDoc.uid}${contactUid}`;
+    } else {
+      chatId = `${contactUid}${currentUserDoc.uid}`;
+    }
+    return chatId;
+  };
 
   return (
     <div className="w-full min-h-screen max-h-screen overflow-y-hidden flex bg-slate-400">
@@ -99,57 +110,51 @@ function ChatPage() {
         <header className="w-full">
           <div className="w-full bg-slate-300 border-r border-gray-400 p-2 flex items-center justify-between box-border">
             <div className="h-14 w-14 rounded-full bg-blue-950 text-slate-300 flex items-center justify-center font-semibold text-2xl roboto-font">
-              {currentUserDoc.fullName?.charAt(0).toUpperCase()}
+              {currentUserDoc?.fullName?.charAt(0).toUpperCase()}
             </div>
             <div className="flex items-center">
-              {allContacts.length > 0 && (
+              {activeTab == "1" ? (
                 <>
-                  {activeTab == "1" ? (
-                    <>
-                      <button
-                        className="flex flex-col items-center"
-                        onClick={() => setOpenModal(true)}
-                      >
-                        <MdPersonAddAlt1 className="text-blue-950 text-3xl" />
-                        <h6 className="text-xs text-blue-950 josefin-font">
-                          Add Contact
-                        </h6>
-                      </button>
-                      <AddContactModal
-                        currentUserDoc={currentUserDoc}
-                        openModal={openModal}
-                        setOpenModal={setOpenModal}
-                        setLoading={setLoading}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="flex flex-col items-center"
-                        onClick={() => setOpenGroupModal(true)}
-                      >
-                        <MdGroups className="text-blue-950 text-3xl" />
-                        <h6 className="text-xs text-blue-950 josefin-font">
-                          Create Group
-                        </h6>
-                      </button>
-                      <CreateGroupModal
-                        openGroupModal={openGroupModal}
-                        setOpenGroupModal={setOpenGroupModal}
-                        allContacts={allContacts}
-                        currentUserDoc={currentUserDoc}
-                        setGroupListLoading={setGroupListLoading}
-                      />
-                    </>
-                  )}
-                  <button className="flex flex-col items-center mx-6">
-                    <CgProfile className="text-blue-950" size="27px" />
-                    <h6 className="text-xs text-blue-950 mt-1 josefin-font">
-                      Profile
+                  <button
+                    className="flex flex-col items-center"
+                    onClick={() => setOpenModal(true)}
+                  >
+                    <MdPersonAddAlt1 className="text-blue-950 text-3xl" />
+                    <h6 className="text-xs text-blue-950 josefin-font">
+                      Add Contact
                     </h6>
                   </button>
+                  <AddContactModal
+                    currentUserDoc={currentUserDoc}
+                    openModal={openModal}
+                    setOpenModal={setOpenModal}
+                  />
+                </>
+              ) : (
+                <>
+                  <button
+                    className="flex flex-col items-center"
+                    onClick={() => setOpenGroupModal(true)}
+                  >
+                    <MdGroups className="text-blue-950 text-3xl" />
+                    <h6 className="text-xs text-blue-950 josefin-font">
+                      Create Group
+                    </h6>
+                  </button>
+                  <CreateGroupModal
+                    openGroupModal={openGroupModal}
+                    setOpenGroupModal={setOpenGroupModal}
+                    allContacts={allContacts}
+                    currentUserDoc={currentUserDoc}
+                  />
                 </>
               )}
+              <button className="flex flex-col items-center mx-6">
+                <CgProfile className="text-blue-950" size="27px" />
+                <h6 className="text-xs text-blue-950 mt-1 josefin-font">
+                  Profile
+                </h6>
+              </button>
               <button
                 className="flex flex-col items-center mr-3"
                 onClick={() => signOut(auth)}
@@ -180,6 +185,7 @@ function ChatPage() {
                     currentContact={currentContact}
                     setCurrentContact={setCurrentContact}
                     currentUserDoc={currentUserDoc}
+                    generateChatId={generateChatId}
                   />
                 ),
               },
@@ -204,6 +210,7 @@ function ChatPage() {
         currentContact={currentContact}
         currentUserDoc={currentUserDoc}
         currentGroup={currentGroup}
+        generateChatId={generateChatId}
       />
     </div>
   );

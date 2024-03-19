@@ -4,14 +4,13 @@ import "../css/chatPage.css";
 import { useForm, Controller } from "react-hook-form";
 import { whiteSpaceRegex } from "../contants";
 import { v4 as uuidv4 } from "uuid";
-import { addDoc, collection, db } from "../config";
+import { addDoc, collection, db, doc, setDoc } from "../config";
 
 function CreateGroupModal({
   openGroupModal,
   setOpenGroupModal,
   allContacts,
   currentUserDoc,
-  setGroupListLoading,
 }) {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [showValidationMsg, setShowValidationMsg] = useState(false);
@@ -50,13 +49,14 @@ function CreateGroupModal({
   const createGroup = async ({ groupName }) => {
     clickedCreateBtn = true;
     if (selectedMembers.length > 1) {
-      await addDoc(collection(db, "groups"), {
+      const generateGroupId = uuidv4();
+      await setDoc(doc(db, "groups", generateGroupId), {
         groupName: groupName,
-        groupId: uuidv4(),
+        groupId: generateGroupId,
         adminUID: currentUserDoc.uid,
         members: [currentUserDoc.uid, ...selectedMembers],
       });
-      setGroupListLoading(true);
+      setSelectedMembers([]);
       closeModal();
     } else {
       setShowValidationMsg(true);

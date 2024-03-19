@@ -19,7 +19,6 @@ function AddContactModal({
   currentUserDoc,
   openModal,
   setOpenModal,
-  setLoading,
 }) {
   const [btnLoading, setBtnLoading] = useState(false);
   const {
@@ -66,7 +65,6 @@ function AddContactModal({
             content: "Contact added successfully",
             duration: 1,
           });
-          setLoading(true);
           closeModal();
         }
       } else {

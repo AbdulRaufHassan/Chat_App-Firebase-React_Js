@@ -7,7 +7,8 @@ function ContactList({
   allContacts,
   currentContact,
   setCurrentContact,
-  currentUserDoc
+  generateChatId,
+  currentUserDoc,
 }) {
   return (
     <>
@@ -19,6 +20,11 @@ function ContactList({
         <ul className="contact_list mt-2">
           {allContacts.map((contact) => {
             let contactIdMatch = currentContact.uid == contact.uid;
+            const chatId = generateChatId(contact.uid);
+            const lastMessageObj =
+              contact.lastMessages && contact.lastMessages[chatId];
+            const isCurrentUserSender =
+              lastMessageObj && lastMessageObj.senderUid === currentUserDoc.uid;
             return (
               <li
                 key={contact.uid}
@@ -54,7 +60,24 @@ function ContactList({
                         contactIdMatch ? "text-gray-500" : "text-gray-400"
                       }`}
                     >
-                      {currentUserDoc.lastMsg ? currentUserDoc.lastMsg : 'Lorem, ipsum dolor sit elit...'}
+                      {lastMessageObj
+                        ? `${
+                            isCurrentUserSender
+                              ? "You"
+                              : contact.fullName.length > 7
+                              ? contact.fullName.slice(
+                                  0,
+                                  contact.fullName.indexOf(" ") + 1
+                                )
+                              : contact.fullName
+                          }: ${
+                            lastMessageObj.lastMessage.length > 20
+                              ? `${lastMessageObj.lastMessage
+                                  .slice(0, 25)
+                                  .trim()}...`
+                              : lastMessageObj.lastMessage
+                          }`
+                        : `I'm using Rauf's chat app 😊`}
                     </p>
                   </div>
                   <div className="w-auto mt-4">

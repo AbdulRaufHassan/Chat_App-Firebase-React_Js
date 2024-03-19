@@ -1,7 +1,12 @@
 import { Spin } from "antd";
 import React from "react";
 
-function GroupList({ groupListLoading, allGroups, setCurrentGroup,currentGroup }) {
+function GroupList({
+  groupListLoading,
+  allGroups,
+  setCurrentGroup,
+  currentGroup,
+}) {
   return (
     <>
       {groupListLoading ? (
@@ -47,7 +52,9 @@ function GroupList({ groupListLoading, allGroups, setCurrentGroup,currentGroup }
                         groupIdMatch ? "text-gray-500" : "text-gray-400"
                       }`}
                     >
-                      Lorem, ipsum dolor sit elit...
+                      {group.lastMessage && group.lastMessage.lastMessage
+                        ? group.lastMessage.lastMessage
+                        : "Hello, I'm using Rauf 's chat app 😊"}
                     </p>
                   </div>
                   <div className="w-auto mt-4">
