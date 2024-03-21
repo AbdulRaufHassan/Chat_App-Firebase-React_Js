@@ -56,7 +56,7 @@ function ContactList({
                       {contact.fullName}
                     </h1>
                     <p
-                      className={`josefin-font ${
+                      className={`josefin-font whitespace-nowrap ${
                         contactIdMatch ? "text-gray-500" : "text-gray-400"
                       }`}
                     >
@@ -67,28 +67,36 @@ function ContactList({
                               : contact.fullName.length > 7
                               ? contact.fullName.slice(
                                   0,
-                                  contact.fullName.indexOf(" ") + 1
+                                  contact.fullName.indexOf(" ")
                                 )
                               : contact.fullName
                           }: ${
-                            lastMessageObj.lastMessage.length > 20
+                            lastMessageObj.lastMessage.length > 25
                               ? `${lastMessageObj.lastMessage
-                                  .slice(0, 25)
+                                  .slice(0, 26)
                                   .trim()}...`
                               : lastMessageObj.lastMessage
                           }`
-                        : `I'm using Rauf's chat app 😊`}
+                        : `Hello, I'm using Rauf 's chat app 😊`}
                     </p>
                   </div>
-                  <div className="w-auto mt-4">
-                    <span
-                      className={`inline-block ${
-                        contactIdMatch ? "text-gray-500" : "text-gray-400"
-                      } roboto-font`}
-                    >
-                      4:48 PM
-                    </span>
-                  </div>
+                  {lastMessageObj?.sendTime && (
+                    <div className="w-auto mt-4">
+                      <span
+                        className={`inline-block ${
+                          contactIdMatch ? "text-gray-500" : "text-gray-400"
+                        } roboto-font`}
+                      >
+                        {new Date(
+                          lastMessageObj.sendTime?.toDate()
+                        ).toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </li>
             );

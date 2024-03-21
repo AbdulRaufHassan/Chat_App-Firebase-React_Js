@@ -1,10 +1,10 @@
 import { Modal, Select } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../css/chatPage.css";
 import { useForm, Controller } from "react-hook-form";
 import { whiteSpaceRegex } from "../contants";
 import { v4 as uuidv4 } from "uuid";
-import { addDoc, collection, db, doc, setDoc } from "../config";
+import { db, doc, setDoc } from "../config";
 
 function CreateGroupModal({
   openGroupModal,
@@ -14,6 +14,7 @@ function CreateGroupModal({
 }) {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [showValidationMsg, setShowValidationMsg] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -22,8 +23,8 @@ function CreateGroupModal({
   } = useForm();
 
   const closeModal = () => {
-    clearErrors();
     setSelectedMembers([]);
+    clearErrors();
     setShowValidationMsg(false);
     setOpenGroupModal(false);
   };
@@ -40,15 +41,18 @@ function CreateGroupModal({
     ),
   }));
 
-  let clickedCreateBtn = false;
   const handleChange = (selectedValues) => {
-    setSelectedMembers(selectedValues);
-    clickedCreateBtn && setShowValidationMsg(selectedMembers.length + 1 < 2);
+    if (selectedValues.length < 2) {
+      setShowValidationMsg(true);
+    } else if (selectedValues.length >= 2) {
+      setShowValidationMsg(false);
+    }
+    setSelectedMembers(selectedValues.map((uid) => uid));
   };
 
   const createGroup = async ({ groupName }) => {
-    clickedCreateBtn = true;
-    if (selectedMembers.length > 1) {
+    if (selectedMembers.length >= 2) {
+      console.log(selectedMembers, groupName, currentUserDoc.uid);
       const generateGroupId = uuidv4();
       await setDoc(doc(db, "groups", generateGroupId), {
         groupName: groupName,
@@ -56,12 +60,16 @@ function CreateGroupModal({
         adminUID: currentUserDoc.uid,
         members: [currentUserDoc.uid, ...selectedMembers],
       });
-      setSelectedMembers([]);
       closeModal();
-    } else {
-      setShowValidationMsg(true);
     }
   };
+
+  useEffect(() => {
+    console.log(errors)
+    if (errors.groupName && selectedMembers.length < 2) {
+      setShowValidationMsg(true);
+    }
+  }, [errors, selectedMembers]);
 
   return (
     <Modal open={openGroupModal} footer={null} onCancel={closeModal}>
@@ -103,6 +111,7 @@ function CreateGroupModal({
           <Select
             mode="multiple"
             size="middle"
+            value={selectedMembers}
             placeholder="Select Members"
             showSearch={false}
             onChange={handleChange}

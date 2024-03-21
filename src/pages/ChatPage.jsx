@@ -19,7 +19,7 @@ import AddContactModal from "../components/AddContactModal.jsx";
 import ContactList from "../components/ContactList.jsx";
 import ChatSection from "../components/ChatSection.jsx";
 import CreateGroupModal from "../components/CreateGroupModal.jsx";
-import { Tabs } from "antd";
+import { Tabs, message } from "antd";
 import GroupList from "../components/GroupList.jsx";
 
 function ChatPage() {
@@ -92,7 +92,7 @@ function ChatPage() {
     if (currentUserDoc?.uid) {
       getAllGroups();
     }
-  }, [groupListLoading, currentUserDoc]);
+  }, [currentUserDoc]);
 
   const generateChatId = (contactUid) => {
     let chatId;
@@ -134,7 +134,19 @@ function ChatPage() {
                 <>
                   <button
                     className="flex flex-col items-center"
-                    onClick={() => setOpenGroupModal(true)}
+                    onClick={() => {
+                      if (currentUserDoc.contacts.length < 2) {
+                        message.destroy()
+                        message.info(
+                          {
+                            type: "info",
+                            content: "At least two contacts required in your list to create a group",
+                          }
+                        );
+                      } else {
+                        setOpenGroupModal(true);
+                      }
+                    }}
                   >
                     <MdGroups className="text-blue-950 text-3xl" />
                     <h6 className="text-xs text-blue-950 josefin-font">
@@ -198,6 +210,7 @@ function ChatPage() {
                     allGroups={allGroups}
                     setCurrentGroup={setCurrentGroup}
                     currentGroup={currentGroup}
+                    currentUserDoc={currentUserDoc}
                   />
                 ),
               },

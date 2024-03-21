@@ -6,6 +6,7 @@ function GroupList({
   allGroups,
   setCurrentGroup,
   currentGroup,
+  currentUserDoc,
 }) {
   return (
     <>
@@ -48,24 +49,48 @@ function GroupList({
                       {group.groupName}
                     </h1>
                     <p
-                      className={`josefin-font ${
+                      className={`josefin-font whitespace-nowrap ${
                         groupIdMatch ? "text-gray-500" : "text-gray-400"
                       }`}
                     >
-                      {group.lastMessage && group.lastMessage.lastMessage
-                        ? group.lastMessage.lastMessage
+                      {group.lastMessage
+                        ? `${
+                            group.lastMessage.senderUid == currentUserDoc.uid
+                              ? "You"
+                              : group.lastMessage.senderFullName.length > 7
+                              ? group.lastMessage.senderFullName.slice(
+                                  0,
+                                  group.lastMessage.senderFullName.indexOf(" ")
+                                )
+                              : group.lastMessage.senderFullName
+                          }: ${
+                            group.lastMessage.lastMessage.length > 25
+                              ? `${group.lastMessage.lastMessage.slice(
+                                  0,
+                                  26
+                                )}...`
+                              : group.lastMessage.lastMessage
+                          }`
                         : "Hello, I'm using Rauf 's chat app 😊"}
                     </p>
                   </div>
-                  <div className="w-auto mt-4">
-                    <span
-                      className={`inline-block ${
-                        groupIdMatch ? "text-gray-500" : "text-gray-400"
-                      } roboto-font`}
-                    >
-                      4:48 PM
-                    </span>
-                  </div>
+                  {group.lastMessage?.sendTime && (
+                    <div className="w-auto mt-4">
+                      <span
+                        className={`inline-block ${
+                          groupIdMatch ? "text-gray-500" : "text-gray-400"
+                        } roboto-font`}
+                      >
+                        {new Date(
+                          group.lastMessage?.sendTime?.toDate()
+                        ).toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </li>
             );

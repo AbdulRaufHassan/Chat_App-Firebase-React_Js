@@ -59,6 +59,7 @@ function ChatSection({
             lastMessage: messageInputVal.trim(),
             chatId: generateChatId(currentContact.uid),
             senderUid: currentUserDoc.uid,
+            sendTime: serverTimestamp()
           },
         });
         await updateDoc(doc(db, "users", currentContact.uid), {
@@ -66,6 +67,7 @@ function ChatSection({
             lastMessage: messageInputVal.trim(),
             chatId: generateChatId(currentContact.uid),
             senderUid: currentUserDoc.uid,
+            sendTime: serverTimestamp()
           },
         });
       } else {
@@ -80,6 +82,8 @@ function ChatSection({
           lastMessage: {
             lastMessage: messageInputVal.trim(),
             senderUid: currentUserDoc.uid,
+            senderFullName: currentUserDoc.fullName,
+            sendTime: serverTimestamp()
           },
         });
       }
