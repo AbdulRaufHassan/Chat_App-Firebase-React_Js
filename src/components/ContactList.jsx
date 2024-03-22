@@ -17,7 +17,7 @@ function ContactList({
           <Spin size="large" />
         </div>
       ) : allContacts.length ? (
-        <ul className="contact_list mt-2">
+        <ul className="contact_list">
           {allContacts.map((contact) => {
             let contactIdMatch = currentContact.uid == contact.uid;
             const chatId = generateChatId(contact.uid);
@@ -77,7 +77,7 @@ function ContactList({
                                   .trim()}...`
                               : lastMessageObj.lastMessage
                           }`
-                        : `Hello, I'm using Rauf 's chat app 😊`}
+                        : contact.about}
                     </p>
                   </div>
                   {lastMessageObj?.sendTime && (
@@ -89,11 +89,17 @@ function ContactList({
                       >
                         {new Date(
                           lastMessageObj.sendTime?.toDate()
-                        ).toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
+                        ).getDate() == new Date().getDate()
+                          ? new Date(
+                              lastMessageObj.sendTime?.toDate()
+                            ).toLocaleTimeString([], {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            })
+                          : new Date(
+                              lastMessageObj.sendTime?.toDate()
+                            ).toLocaleDateString()}
                       </span>
                     </div>
                   )}
@@ -105,7 +111,6 @@ function ContactList({
       ) : (
         <div className="w-4/5 mx-auto flex flex-col justify-center items-center text-xl josefin-font text-slate-300 zeroContactMsg">
           <p>You have no contact</p>
-          <p>Add contact to start chatting</p>
         </div>
       )}
     </>

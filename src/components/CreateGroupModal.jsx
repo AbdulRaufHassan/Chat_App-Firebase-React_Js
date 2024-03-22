@@ -1,4 +1,4 @@
-import { Modal, Select } from "antd";
+import { Modal, Select, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import "../css/chatPage.css";
 import { useForm, Controller } from "react-hook-form";
@@ -14,16 +14,19 @@ function CreateGroupModal({
 }) {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [showValidationMsg, setShowValidationMsg] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm();
 
   const closeModal = () => {
     setSelectedMembers([]);
+    reset()
     clearErrors();
     setShowValidationMsg(false);
     setOpenGroupModal(false);
@@ -52,7 +55,7 @@ function CreateGroupModal({
 
   const createGroup = async ({ groupName }) => {
     if (selectedMembers.length >= 2) {
-      console.log(selectedMembers, groupName, currentUserDoc.uid);
+      setBtnLoading(true)
       const generateGroupId = uuidv4();
       await setDoc(doc(db, "groups", generateGroupId), {
         groupName: groupName,
@@ -60,19 +63,19 @@ function CreateGroupModal({
         adminUID: currentUserDoc.uid,
         members: [currentUserDoc.uid, ...selectedMembers],
       });
+      setBtnLoading(false)
       closeModal();
     }
   };
 
   useEffect(() => {
-    console.log(errors)
     if (errors.groupName && selectedMembers.length < 2) {
       setShowValidationMsg(true);
     }
   }, [errors, selectedMembers]);
 
   return (
-    <Modal open={openGroupModal} footer={null} onCancel={closeModal}>
+    <Modal open={openGroupModal} footer={null} onCancel={closeModal} maskClosable={false}>
       <div>
         <h1 className="roboto-font text-blue-950 font-semibold text-2xl">
           Create Group
@@ -138,10 +141,10 @@ function CreateGroupModal({
               Cancel
             </button>
             <button
-              type="submit"
+              type="submit" disabled={btnLoading}
               className="py-2 w-32 rounded-lg bg-blue-950 text-white ml-3 roboto-font text-lg"
             >
-              Create
+              {btnLoading ? <Spin/> : 'Create'}
             </button>
           </div>
         </form>

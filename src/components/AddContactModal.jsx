@@ -79,7 +79,7 @@ function AddContactModal({
   };
 
   return (
-    <Modal open={openModal} footer={null} onCancel={closeModal}>
+    <Modal open={openModal} footer={null} onCancel={closeModal} maskClosable={false}>
       <div>
         <h1 className="roboto-font text-blue-950 font-semibold text-2xl">
           Add Contact

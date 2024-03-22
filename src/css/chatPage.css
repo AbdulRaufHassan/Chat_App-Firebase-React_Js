@@ -25,18 +25,19 @@
 }
 
 .ant-tabs-nav .ant-tabs-tab .ant-tabs-tab-btn {
-  color: rgb(156 163 175) !important;
+  color: rgb(107 114 128) !important;
   font-size: large;
   font-family: "roboto", sans-serif;
   letter-spacing: 0.5px;
 }
 
 .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: rgb(203 213 225) !important;
+  color: rgb(156 163 175) !important;
 }
 
 .ant-tabs-nav .ant-tabs-ink-bar.ant-tabs-ink-bar-animated {
-  background-color: rgb(203 213 225) !important;
+  background-color: rgb(156 163 175) !important;
+  height: 04px !important;
 }
 
 .ant-tabs-nav-list {
@@ -217,3 +218,11 @@
 .red_membersSelect_border .ant-select-selector {
   border: 2px solid rgb(153 27 27) !important;
 }
+
+.profile_drawer input {
+  width: 95%;
+  background-color: transparent;
+  font-family: "roboto", sans-serif;
+  font-size: 20px;
+}
+

@@ -15,7 +15,7 @@ function GroupList({
           <Spin size="large" />
         </div>
       ) : allGroups.length ? (
-        <ul className="groups_list mt-2">
+        <ul className="groups_list">
           {allGroups.map((group) => {
             let groupIdMatch = currentGroup.groupId == group.groupId;
             return (
@@ -83,11 +83,17 @@ function GroupList({
                       >
                         {new Date(
                           group.lastMessage?.sendTime?.toDate()
-                        ).toLocaleTimeString([], {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
+                        ).getDate() == new Date().getDate()
+                          ? new Date(
+                              group.lastMessage?.sendTime?.toDate()
+                            ).toLocaleTimeString([], {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            })
+                          : new Date(
+                              group.lastMessage?.sendTime?.toDate()
+                            ).toLocaleDateString()}
                       </span>
                     </div>
                   )}
@@ -99,7 +105,6 @@ function GroupList({
       ) : (
         <div className="w-4/5 mx-auto flex flex-col justify-center items-center text-xl josefin-font text-slate-300 zeroContactMsg">
           <p>You have no groups</p>
-          <p>Create Group to start chatting</p>
         </div>
       )}
     </>
