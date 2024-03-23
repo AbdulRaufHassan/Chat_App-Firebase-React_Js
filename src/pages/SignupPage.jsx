@@ -37,7 +37,6 @@ function SignupPage() {
           fullName: data.fullName,
           emailAddress: data.email,
           uid: auth.currentUser.uid,
-          about: "Hello, I'm using Rauf 's chat app",
           contacts: []
         });
       })

@@ -40,7 +40,7 @@ function GroupList({
                     groupIdMatch ? "border-slate-300" : "border-slate-600"
                   } flex justify-between flex-1`}
                 >
-                  <div className="flex-1 mt-4">
+                  <div className="flex-1 flex flex-col justify-center">
                     <h1
                       className={`roboto-font font-semibold ${
                         groupIdMatch ? "text-blue-950" : "text-slate-300"
@@ -48,31 +48,26 @@ function GroupList({
                     >
                       {group.groupName}
                     </h1>
-                    <p
-                      className={`josefin-font whitespace-nowrap ${
-                        groupIdMatch ? "text-gray-500" : "text-gray-400"
-                      }`}
-                    >
-                      {group.lastMessage
-                        ? `${
-                            group.lastMessage.senderUid == currentUserDoc.uid
-                              ? "You"
-                              : group.lastMessage.senderFullName.length > 7
-                              ? group.lastMessage.senderFullName.slice(
-                                  0,
-                                  group.lastMessage.senderFullName.indexOf(" ")
-                                )
-                              : group.lastMessage.senderFullName
-                          }: ${
-                            group.lastMessage.lastMessage.length > 25
-                              ? `${group.lastMessage.lastMessage.slice(
-                                  0,
-                                  26
-                                )}...`
-                              : group.lastMessage.lastMessage
-                          }`
-                        : "Hello, I'm using Rauf 's chat app 😊"}
-                    </p>
+                    {group.lastMessage && (
+                      <p
+                        className={`josefin-font whitespace-nowrap ${
+                          groupIdMatch ? "text-gray-500" : "text-gray-400"
+                        }`}
+                      >
+                        {group.lastMessage.senderUid == currentUserDoc.uid
+                          ? "You"
+                          : group.lastMessage.senderFullName.length > 7
+                          ? group.lastMessage.senderFullName.slice(
+                              0,
+                              group.lastMessage.senderFullName.indexOf(" ")
+                            )
+                          : group.lastMessage.senderFullName}
+                        :
+                        {group.lastMessage.lastMessage.length > 25
+                          ? ` ${group.lastMessage.lastMessage.slice(0, 26)}...`
+                          : ` ${group.lastMessage.lastMessage}`}
+                      </p>
+                    )}
                   </div>
                   {group.lastMessage?.sendTime && (
                     <div className="w-auto mt-4">

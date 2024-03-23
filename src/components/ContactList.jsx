@@ -47,38 +47,38 @@ function ContactList({
                     contactIdMatch ? "border-slate-300" : "border-slate-600"
                   } flex justify-between flex-1`}
                 >
-                  <div className="flex-1 mt-4">
+                  <div className="flex-1 flex flex-col justify-center">
                     <h1
                       className={`roboto-font font-semibold ${
                         contactIdMatch ? "text-blue-950" : "text-slate-300"
                       } text-xl tracking-wider`}
                     >
-                      {contact.fullName}
+                      {contact.fullName.length > 17
+                        ? `${contact.fullName.slice(0, 18).trim()}...`
+                        : contact.fullName}
                     </h1>
-                    <p
-                      className={`josefin-font whitespace-nowrap ${
-                        contactIdMatch ? "text-gray-500" : "text-gray-400"
-                      }`}
-                    >
-                      {lastMessageObj
-                        ? `${
-                            isCurrentUserSender
-                              ? "You"
-                              : contact.fullName.length > 7
-                              ? contact.fullName.slice(
-                                  0,
-                                  contact.fullName.indexOf(" ")
-                                )
-                              : contact.fullName
-                          }: ${
-                            lastMessageObj.lastMessage.length > 25
-                              ? `${lastMessageObj.lastMessage
-                                  .slice(0, 26)
-                                  .trim()}...`
-                              : lastMessageObj.lastMessage
-                          }`
-                        : contact.about}
-                    </p>
+                    {lastMessageObj && (
+                      <p
+                        className={`josefin-font whitespace-nowrap ${
+                          contactIdMatch ? "text-gray-500" : "text-gray-400"
+                        }`}
+                      >
+                        {isCurrentUserSender
+                          ? "You"
+                          : contact.fullName.length > 7
+                          ? contact.fullName.slice(
+                              0,
+                              contact.fullName.indexOf(" ")
+                            )
+                          : contact.fullName}
+                        :
+                        {lastMessageObj.lastMessage.length > 25
+                          ? ` ${lastMessageObj.lastMessage
+                              .slice(0, 26)
+                              .trim()}...`
+                          : ` ${lastMessageObj.lastMessage}`}
+                      </p>
+                    )}
                   </div>
                   {lastMessageObj?.sendTime && (
                     <div className="w-auto mt-4">

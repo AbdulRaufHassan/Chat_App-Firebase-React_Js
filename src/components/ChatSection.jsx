@@ -74,7 +74,6 @@ function ChatSection({
         await addDoc(collection(db, "groupMessages"), {
           msg: messageInputVal.trim(),
           senderId: currentUserDoc.uid,
-          senderFullName: currentUserDoc.fullName,
           groupId: currentGroup.groupId,
           sendTime: serverTimestamp(),
         });
@@ -82,7 +81,6 @@ function ChatSection({
           lastMessage: {
             lastMessage: messageInputVal.trim(),
             senderUid: currentUserDoc.uid,
-            senderFullName: currentUserDoc.fullName,
             sendTime: serverTimestamp(),
           },
         });
