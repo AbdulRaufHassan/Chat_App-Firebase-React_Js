@@ -7,6 +7,7 @@ function GroupList({
   setCurrentGroup,
   currentGroup,
   currentUserDoc,
+  allGroupMembers,
 }) {
   return (
     <>
@@ -18,6 +19,7 @@ function GroupList({
         <ul className="groups_list">
           {allGroups.map((group) => {
             let groupIdMatch = currentGroup.groupId == group.groupId;
+            const member = {}
             return (
               <li
                 key={group.groupId}
@@ -54,15 +56,6 @@ function GroupList({
                           groupIdMatch ? "text-gray-500" : "text-gray-400"
                         }`}
                       >
-                        {group.lastMessage.senderUid == currentUserDoc.uid
-                          ? "You"
-                          : group.lastMessage.senderFullName.length > 7
-                          ? group.lastMessage.senderFullName.slice(
-                              0,
-                              group.lastMessage.senderFullName.indexOf(" ")
-                            )
-                          : group.lastMessage.senderFullName}
-                        :
                         {group.lastMessage.lastMessage.length > 25
                           ? ` ${group.lastMessage.lastMessage.slice(0, 26)}...`
                           : ` ${group.lastMessage.lastMessage}`}

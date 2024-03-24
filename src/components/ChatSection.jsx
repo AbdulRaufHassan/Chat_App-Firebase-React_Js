@@ -13,7 +13,7 @@ import {
   updateDoc,
   doc,
   arrayUnion,
-} from "../config";
+} from "../config/index.js";
 import { Spin } from "antd";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { FaXmark } from "react-icons/fa6";
@@ -120,17 +120,19 @@ function ChatSection({
   };
 
   const getAllGroupMembers = async () => {
-    const contactsQuery = query(
-      collection(db, "users"),
-      where("uid", "in", currentGroup.members)
-    );
-    onSnapshot(contactsQuery, (querySnapshot) => {
-      const tempArr = [];
-      querySnapshot.forEach((doc) => {
-        tempArr.push(doc.data());
+    if (currentGroup?.groupId) {
+      const contactsQuery = query(
+        collection(db, "users"),
+        where("uid", "in", currentGroup.members)
+      );
+      onSnapshot(contactsQuery, (querySnapshot) => {
+        const tempArr = [];
+        querySnapshot.forEach((doc) => {
+          tempArr.push(doc.data());
+        });
+        setAllGroupMembers(tempArr);
       });
-      setAllGroupMembers(tempArr);
-    });
+    }
   };
 
   useEffect(() => {
@@ -155,9 +157,18 @@ function ChatSection({
         <>
           <header className="w-full bg-slate-300 flex items-center">
             <div className="h-14 w-14 rounded-full bg-blue-950 ml-4 mr-3 flex items-center justify-center text-slate-300 roboto-font text-2xl font-semibold">
-              {isContact
-                ? currentContact.fullName?.charAt(0).toUpperCase()
-                : currentGroup.groupName?.charAt(0).toUpperCase()}
+              {isContact ? (
+                currentContact?.profilePicture ? (
+                  <img
+                    src={currentContact.profilePicture}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  currentContact.fullName?.charAt(0).toUpperCase()
+                )
+              ) : (
+                currentGroup.groupName?.charAt(0).toUpperCase()
+              )}
             </div>
             <h1 className="roboto-font font-semibold text-blue-950 text-xl tracking-wider">
               {isContact ? currentContact.fullName : currentGroup.groupName}
@@ -226,11 +237,32 @@ function ChatSection({
                     </div>
                     <div className="h-full">
                       <div className="h-14 w-14 rounded-full flex items-center justify-center roboto-font text-2xl font-semibold">
-                        {isContact
-                          ? v.senderId == currentUserDoc.uid
-                            ? currentUserDoc.fullName?.charAt(0).toUpperCase()
-                            : currentContact.fullName?.charAt(0).toUpperCase()
-                          : member[0]?.fullName?.charAt(0).toUpperCase()}
+                        {isContact ? (
+                          v.senderId == currentUserDoc.uid ? (
+                            currentUserDoc?.profilePicture ? (
+                              <img
+                                src={currentUserDoc.profilePicture}
+                                className="w-full h-full rounded-full object-cover"
+                              />
+                            ) : (
+                              currentUserDoc.fullName?.charAt(0).toUpperCase()
+                            )
+                          ) : currentContact?.profilePicture ? (
+                            <img
+                              src={currentContact.profilePicture}
+                              className="w-full h-full rounded-full object-cover"
+                            />
+                          ) : (
+                            currentContact.fullName?.charAt(0).toUpperCase()
+                          )
+                        ) : member[0]?.profilePicture ? (
+                          <img
+                            src={member[0].profilePicture}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          member[0]?.fullName?.charAt(0).toUpperCase()
+                        )}
                       </div>
                     </div>
                   </div>

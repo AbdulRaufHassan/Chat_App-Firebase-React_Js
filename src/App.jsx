@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SignupPage from "./pages/SignupPage";
 import SigninPage from "./pages/SigninPage";
-import { auth, db, doc, getDoc, onAuthStateChanged } from "./config/index";
+import { auth, db, doc, getDoc, onAuthStateChanged } from "./config/index.js";
 import { useEffect, useState } from "react";
 import ChatPage from "./pages/ChatPage";
 import { Spin } from "antd";

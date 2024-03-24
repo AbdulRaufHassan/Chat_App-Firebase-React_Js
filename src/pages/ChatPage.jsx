@@ -8,20 +8,18 @@ import {
   collection,
   db,
   doc,
-  getDoc,
-  getDocs,
   onSnapshot,
   query,
   signOut,
   where,
-} from "../config";
+} from "../config/index.js";
 import AddContactModal from "../components/AddContactModal.jsx";
-import ContactList from "../components/ContactList.jsx";
 import ChatSection from "../components/ChatSection.jsx";
 import CreateGroupModal from "../components/CreateGroupModal.jsx";
 import { Tabs, message } from "antd";
 import GroupList from "../components/GroupList.jsx";
 import ProfileDrawer from "../components/ProfileDrawer.jsx";
+import ContactList from "../components/ContactList.jsx";
 
 function ChatPage() {
   const [openModal, setOpenModal] = useState(false);
@@ -110,7 +108,14 @@ function ChatPage() {
               className="h-14 w-14 cursor-pointer rounded-full bg-blue-950 text-slate-300 flex items-center justify-center font-semibold text-2xl roboto-font"
               onClick={() => setOpenProfileDrawer(true)}
             >
-              {currentUserDoc?.fullName?.charAt(0).toUpperCase()}
+              {currentUserDoc?.profilePicture ? (
+                <img
+                  src={currentUserDoc.profilePicture}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                currentUserDoc?.fullName?.charAt(0).toUpperCase()
+              )}
             </div>
             <div className="flex items-center">
               {activeTab == "1" ? (

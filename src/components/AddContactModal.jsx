@@ -13,7 +13,7 @@ import {
   query,
   updateDoc,
   where,
-} from "../config";
+} from "../config/index.js";
 
 function AddContactModal({
   currentUserDoc,

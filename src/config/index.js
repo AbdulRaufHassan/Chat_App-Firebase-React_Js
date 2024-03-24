@@ -20,8 +20,15 @@ import {
   addDoc,
   onSnapshot,
   serverTimestamp,
-  orderBy
+  orderBy,
+  deleteField
 } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC49QFBvQR562OsyLer-9DdyHr8gBdnGwQ",
@@ -35,6 +42,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 export {
   auth,
@@ -55,5 +63,10 @@ export {
   addDoc,
   onSnapshot,
   serverTimestamp,
-  orderBy
+  orderBy,
+  deleteField,
+  storage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
 };

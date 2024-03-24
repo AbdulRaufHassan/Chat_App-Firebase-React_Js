@@ -40,7 +40,14 @@ function ContactList({
                       : "bg-slate-300 text-blue-950"
                   }`}
                 >
-                  {contact.fullName?.charAt(0).toUpperCase()}
+                  {contact?.profilePicture ? (
+                    <img
+                      src={contact.profilePicture}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    contact.fullName?.charAt(0).toUpperCase()
+                  )}
                 </div>
                 <div
                   className={`ml-4 h-full border-t ${
@@ -63,18 +70,9 @@ function ContactList({
                           contactIdMatch ? "text-gray-500" : "text-gray-400"
                         }`}
                       >
-                        {isCurrentUserSender
-                          ? "You"
-                          : contact.fullName.length > 7
-                          ? contact.fullName.slice(
-                              0,
-                              contact.fullName.indexOf(" ")
-                            )
-                          : contact.fullName}
-                        :
-                        {lastMessageObj.lastMessage.length > 25
+                        {lastMessageObj.lastMessage.length > 33
                           ? ` ${lastMessageObj.lastMessage
-                              .slice(0, 26)
+                              .slice(0, 34)
                               .trim()}...`
                           : ` ${lastMessageObj.lastMessage}`}
                       </p>

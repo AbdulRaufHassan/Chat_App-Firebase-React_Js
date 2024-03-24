@@ -4,7 +4,7 @@ import "../css/chatPage.css";
 import { useForm, Controller } from "react-hook-form";
 import { whiteSpaceRegex } from "../contants";
 import { v4 as uuidv4 } from "uuid";
-import { db, doc, setDoc } from "../config";
+import { db, doc, setDoc } from "../config/index.js";
 
 function CreateGroupModal({
   openGroupModal,
