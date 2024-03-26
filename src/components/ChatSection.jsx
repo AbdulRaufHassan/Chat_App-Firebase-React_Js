@@ -28,6 +28,7 @@ function ChatSection({
   generateChatId,
   allGroups,
   activeTab,
+  setCurrentGroup
 }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [messageInputVal, setMessageInputVal] = useState("");
@@ -198,6 +199,7 @@ function ChatSection({
             currentContact={currentContact}
             currentGroup={currentGroup}
             allGroupMembers={allGroupMembers}
+            setCurrentGroup={setCurrentGroup}
           />
           <section
             className={`flex py-10 px-3 box-border allMsgsParentDiv ${

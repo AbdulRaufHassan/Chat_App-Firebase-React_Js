@@ -67,17 +67,14 @@ function ChatPage() {
       where("members", "array-contains", currentUserDoc.uid)
     );
     onSnapshot(groupsQuery, (querySnapshot) => {
-      const tempArr = [];
-      querySnapshot.docs.forEach((doc) => {
-        tempArr.push(doc.data());
-        if (
-          currentGroup?.groupId &&
-          currentGroup.groupId === doc.data().groupId
-        ) {
-          console.log(doc.data())
-          setCurrentGroup(doc.data());
-        }
-      });
+      const tempArr = querySnapshot.docs.map((doc) => doc.data());
+      if (currentGroup?.groupId) {
+        let realTimeCurrentGroup = tempArr.filter(
+          (v) => currentGroup.groupId === v.groupId
+        );
+        console.log(realTimeCurrentGroup[0]);
+        setCurrentGroup(realTimeCurrentGroup[0]);
+      }
       setAllGroups(tempArr);
       setGroupListLoading(false);
     });
@@ -247,6 +244,7 @@ function ChatPage() {
         currentGroup={currentGroup}
         generateChatId={generateChatId}
         activeTab={activeTab}
+        setCurrentGroup={setCurrentGroup}
       />
     </div>
   );

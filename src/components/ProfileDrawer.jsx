@@ -21,6 +21,7 @@ function ProfileDrawer({
   currentContact,
   currentGroup,
   allGroupMembers,
+  setCurrentGroup,
 }) {
   const [nameEditDisabled, setNameEditDisabled] = useState(true);
   const [nameInputValue, setNameInputValue] = useState("");
@@ -39,6 +40,7 @@ function ProfileDrawer({
       await updateDoc(doc(db, "groups", currentGroup.groupId), {
         groupName: nameInputValue.trim(),
       });
+      setCurrentGroup({ ...currentGroup, groupName: nameInputValue.trim() });
     }
   };
 
@@ -47,6 +49,7 @@ function ProfileDrawer({
       await updateDoc(doc(db, "groups", currentGroup.groupId), {
         profilePicture: deleteField(),
       });
+      setCurrentGroup({ ...currentGroup, profilePicture: "" });
     } else {
       await updateDoc(doc(db, "users", currentUserDoc.uid), {
         profilePicture: deleteField(),
@@ -89,6 +92,7 @@ function ProfileDrawer({
             await updateDoc(doc(db, "groups", currentGroup.groupId), {
               profilePicture: url,
             });
+            setCurrentGroup({ ...currentGroup, profilePicture: url });
           } else {
             await updateDoc(doc(db, "users", currentUserDoc.uid), {
               profilePicture: url,
