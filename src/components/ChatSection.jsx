@@ -18,6 +18,7 @@ import { Spin } from "antd";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { FaXmark } from "react-icons/fa6";
 import EmojiPicker from "emoji-picker-react";
+import ProfileDrawer from "./ProfileDrawer.jsx";
 
 function ChatSection({
   allContacts,
@@ -33,6 +34,7 @@ function ChatSection({
   const [msgsLoading, setMsgsLoading] = useState(true);
   const [allMessages, setAllMessages] = useState([]);
   const [allGroupMembers, setAllGroupMembers] = useState([]);
+  const [openProfileDrawer, setOpenProfileDrawer] = useState(false);
 
   let messageInputRef = useRef();
   let isContact = currentContact?.uid;
@@ -135,6 +137,10 @@ function ChatSection({
     }
   };
 
+  const openProfileInfoDrawer = () => {
+    setOpenProfileDrawer(true);
+  };
+
   useEffect(() => {
     getAllMessages();
   }, [currentContact, currentGroup]);
@@ -156,7 +162,10 @@ function ChatSection({
       {isContact || isGroup ? (
         <>
           <header className="w-full bg-slate-300 flex items-center">
-            <div className="h-14 w-14 rounded-full bg-blue-950 ml-4 mr-3 flex items-center justify-center text-slate-300 roboto-font text-2xl font-semibold">
+            <div
+              className="h-14 w-14 rounded-full bg-blue-950 ml-4 mr-3 flex items-center justify-center text-slate-300 roboto-font text-2xl font-semibold cursor-pointer"
+              onClick={openProfileInfoDrawer}
+            >
               {isContact ? (
                 currentContact?.profilePicture ? (
                   <img
@@ -166,14 +175,30 @@ function ChatSection({
                 ) : (
                   currentContact.fullName?.charAt(0).toUpperCase()
                 )
+              ) : currentGroup?.profilePicture ? (
+                <img
+                  src={currentGroup.profilePicture}
+                  className="w-full h-full rounded-full object-cover"
+                />
               ) : (
                 currentGroup.groupName?.charAt(0).toUpperCase()
               )}
             </div>
-            <h1 className="roboto-font font-semibold text-blue-950 text-xl tracking-wider">
+            <h1
+              className="roboto-font font-semibold text-blue-950 text-xl tracking-wider cursor-pointer"
+              onClick={openProfileInfoDrawer}
+            >
               {isContact ? currentContact.fullName : currentGroup.groupName}
             </h1>
           </header>
+          <ProfileDrawer
+            openProfileDrawer={openProfileDrawer}
+            setOpenProfileDrawer={setOpenProfileDrawer}
+            currentUserDoc={currentUserDoc}
+            currentContact={currentContact}
+            currentGroup={currentGroup}
+            allGroupMembers={allGroupMembers}
+          />
           <section
             className={`flex py-10 px-3 box-border allMsgsParentDiv ${
               allMessages.length && !msgsLoading

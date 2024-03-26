@@ -1,14 +1,13 @@
 import { Spin } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 
 function GroupList({
   groupListLoading,
   allGroups,
   setCurrentGroup,
   currentGroup,
-  currentUserDoc,
-  allGroupMembers,
 }) {
+
   return (
     <>
       {groupListLoading ? (
@@ -19,7 +18,7 @@ function GroupList({
         <ul className="groups_list">
           {allGroups.map((group) => {
             let groupIdMatch = currentGroup.groupId == group.groupId;
-            const member = {}
+            const member = {};
             return (
               <li
                 key={group.groupId}
@@ -35,7 +34,14 @@ function GroupList({
                       : "bg-slate-300 text-blue-950"
                   }`}
                 >
-                  {group.groupName?.charAt(0).toUpperCase()}
+                  {group?.profilePicture ? (
+                    <img
+                      src={group.profilePicture}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    group.groupName?.charAt(0).toUpperCase()
+                  )}
                 </div>
                 <div
                   className={`ml-4 h-full border-t ${

@@ -26,7 +26,7 @@ function CreateGroupModal({
 
   const closeModal = () => {
     setSelectedMembers([]);
-    reset()
+    reset();
     clearErrors();
     setShowValidationMsg(false);
     setOpenGroupModal(false);
@@ -37,7 +37,14 @@ function CreateGroupModal({
     label: (
       <div className="flex items-center">
         <div className="h-9 w-9 rounded-full bg-blue-950 text-slate-300 flex items-center justify-center font-semibold text-lg roboto-font">
-          {contact.fullName.charAt(0).toUpperCase()}
+          {contact?.profilePicture ? (
+            <img
+              src={contact.profilePicture}
+              className="w-full h-full rounded-full object-cover"
+            />
+          ) : (
+            contact.fullName.charAt(0).toUpperCase()
+          )}
         </div>
         <div className="mx-2 text-xl font-semibold">{contact.fullName}</div>
       </div>
@@ -55,7 +62,7 @@ function CreateGroupModal({
 
   const createGroup = async ({ groupName }) => {
     if (selectedMembers.length >= 2) {
-      setBtnLoading(true)
+      setBtnLoading(true);
       const generateGroupId = uuidv4();
       await setDoc(doc(db, "groups", generateGroupId), {
         groupName: groupName,
@@ -63,7 +70,7 @@ function CreateGroupModal({
         adminUID: currentUserDoc.uid,
         members: [currentUserDoc.uid, ...selectedMembers],
       });
-      setBtnLoading(false)
+      setBtnLoading(false);
       closeModal();
     }
   };
@@ -75,7 +82,12 @@ function CreateGroupModal({
   }, [errors, selectedMembers]);
 
   return (
-    <Modal open={openGroupModal} footer={null} onCancel={closeModal} maskClosable={false}>
+    <Modal
+      open={openGroupModal}
+      footer={null}
+      onCancel={closeModal}
+      maskClosable={false}
+    >
       <div>
         <h1 className="roboto-font text-blue-950 font-semibold text-2xl">
           Create Group
@@ -141,10 +153,11 @@ function CreateGroupModal({
               Cancel
             </button>
             <button
-              type="submit" disabled={btnLoading}
+              type="submit"
+              disabled={btnLoading}
               className="py-2 w-32 rounded-lg bg-blue-950 text-white ml-3 roboto-font text-lg"
             >
-              {btnLoading ? <Spin/> : 'Create'}
+              {btnLoading ? <Spin /> : "Create"}
             </button>
           </div>
         </form>

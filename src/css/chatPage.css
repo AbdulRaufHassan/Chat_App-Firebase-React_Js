@@ -185,12 +185,14 @@
   color: rgb(203 213 225);
 }
 
-.MessageSec > section::-webkit-scrollbar {
+.MessageSec > section::-webkit-scrollbar,
+.ant-drawer-body::-webkit-scrollbar {
   background: transparent !important;
   width: 8px !important;
 }
 
-.MessageSec > section::-webkit-scrollbar-thumb {
+.MessageSec > section::-webkit-scrollbar-thumb,
+.ant-drawer-body::-webkit-scrollbar-thumb {
   background: rgb(23 37 84) !important;
   border-radius: 15px;
 }
@@ -219,18 +221,20 @@
   border: 2px solid rgb(153 27 27) !important;
 }
 
-.profile_drawer input {
+.profile_drawer input,
+.info_drawer input {
   width: 95%;
   background-color: transparent;
   font-family: "roboto", sans-serif;
   font-size: 20px;
 }
 
-.profile_drawer input::placeholder{
+.profile_drawer input::placeholder,
+.info_drawer input::placeholder {
   font-size: 17px;
   font-weight: 400;
 }
 
-.avatar{
+.avatar {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
