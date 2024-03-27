@@ -17,6 +17,7 @@ import {
 import { Spin } from "antd";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { FaXmark } from "react-icons/fa6";
+import { IoArrowBackOutline } from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
 import ProfileDrawer from "./ProfileDrawer.jsx";
 
@@ -28,7 +29,8 @@ function ChatSection({
   generateChatId,
   allGroups,
   activeTab,
-  setCurrentGroup
+  setCurrentGroup,
+  setCurrentContact,
 }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [messageInputVal, setMessageInputVal] = useState("");
@@ -150,19 +152,31 @@ function ChatSection({
     isGroup && getAllGroupMembers();
   }, [currentGroup]);
 
-  messageInputRef && messageInputRef.current && messageInputRef.current.focus();
+  useEffect(() => {
+    messageInputRef &&
+      messageInputRef.current &&
+      messageInputRef.current.focus();
+  }, [showEmojiPicker]);
+
   return (
     <section
       className={`${
         isContact || isGroup
-          ? "bg-slate-400"
-          : "bg-slate-300 flex justify-center items-center"
-      } flex-1 MessageSec relative`}
-      style={{ minWidth: "400px" }}
+          ? "bg-slate-400 showRightSection"
+          : "bg-slate-300 flex justify-center items-center hideRightSection"
+      } flex-1 MessageSec relative rightSection`}
     >
       {isContact || isGroup ? (
         <>
           <header className="w-full bg-slate-300 flex items-center">
+            <button
+              className="ml-4 text-blue-950 chatSecBackBtn"
+              onClick={() => {
+                isContact ? setCurrentContact({}) : setCurrentGroup({});
+              }}
+            >
+              <IoArrowBackOutline size={25} />
+            </button>
             <div
               className="h-14 w-14 rounded-full bg-blue-950 ml-4 mr-3 flex items-center justify-center text-slate-300 roboto-font text-2xl font-semibold cursor-pointer"
               onClick={openProfileInfoDrawer}
@@ -303,29 +317,25 @@ function ChatSection({
           </section>
           <footer className="w-full bg-slate-300 absolute bottom-0 right-0 flex justify-center items-center">
             <button
-              className="mr-4"
               onClick={() => {
                 messageInputRef.current.focus();
                 setShowEmojiPicker(!showEmojiPicker);
               }}
+              className="text-4xl text-blue-950 ml-3 emojiPickerBtn"
             >
-              {showEmojiPicker ? (
-                <FaXmark className="text-4xl text-blue-950 ml-3" />
-              ) : (
-                <MdOutlineEmojiEmotions className="text-4xl text-blue-950 ml-3" />
-              )}
+              {showEmojiPicker ? <FaXmark /> : <MdOutlineEmojiEmotions />}
             </button>
             <input
               type="text"
               ref={messageInputRef}
-              className="flex-1 p-3 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font"
+              className="flex-1 p-3 mx-4 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font msgInput"
               value={messageInputVal}
               onChange={(e) => setMessageInputVal(e.target.value)}
               placeholder="Type a message"
             />
             <div>
               <button
-                className="p-3 bg-blue-950 rounded-full ml-4 mr-3"
+                className="p-3 bg-blue-950 rounded-full mr-3 msgSendBtn"
                 onClick={sendMsg}
               >
                 <MdSend className="text-3xl text-slate-300" />
@@ -335,7 +345,7 @@ function ChatSection({
         </>
       ) : (
         <div className="flex flex-col items-center">
-          <img src={CHAT_ICON} className="h-96 w-96" />
+          <img src={CHAT_ICON} className="sm:h-80 sm:w-80 lg:h-96 lg:w-96" />
           {(activeTab == 1 && allContacts.length > 0) ||
           (activeTab == 2 && allGroups.length > 0) ? (
             <h1 className="text-3xl mt-3 text-gray-600 josefin-font">

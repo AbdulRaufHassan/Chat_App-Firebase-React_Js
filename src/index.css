@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  min-width: 800px;
+  min-width: 370px;
   max-width: 1700px;
   margin: 0px auto;
 }

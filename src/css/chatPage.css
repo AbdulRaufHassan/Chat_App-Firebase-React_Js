@@ -52,9 +52,8 @@
   margin: 0px !important;
 }
 
-.contactListSec {
-  min-width: 400px;
-  max-width: 400px;
+.leftSection {
+  width: 400px;
 }
 
 .contact_list > li:nth-of-type(1) > div:nth-of-type(2),
@@ -237,4 +236,42 @@
 
 .avatar {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.chatSecBackBtn {
+  display: none !important;
+}
+
+@media only screen and (max-width: 800px) {
+  .rightSection {
+    width: 100%;
+  }
+  .hideRightSection {
+    display: none !important;
+  }
+  .leftSection {
+    width: 100%;
+  }
+  .hideLeftSection {
+    display: none !important;
+  }
+  .showLeftSection {
+    display: block !important;
+  }
+  .showRightSection {
+    display: block !important;
+  }
+  .chatSecBackBtn {
+    display: block !important;
+  }
+  .msgInput {
+    margin-left: 5px !important;
+    margin-right: 5px !important;
+  }
+  .msgSendBtn {
+    margin-right: 5px !important;
+  }
+  .emojiPickerBtn {
+    margin-left: 5px !important;
+  }
 }

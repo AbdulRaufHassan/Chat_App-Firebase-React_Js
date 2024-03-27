@@ -234,7 +234,7 @@ function ProfileDrawer({
               ? !selectedPhotoSrc &&
                 !uploading && (
                   <span
-                    className="cursor-pointer flex items-center justify-center absolute bottom-2 right-5 w-10 h-10 rounded-full bg-gray-400 text-blue-950"
+                  htmlFor="profile_picture"  className="cursor-pointer flex items-center justify-center absolute bottom-2 right-5 w-10 h-10 rounded-full bg-gray-400 text-blue-950"
                     style={{ transform: "rotate(-17deg)" }}
                   >
                     <label
@@ -342,7 +342,7 @@ function ProfileDrawer({
                 {allGroupMembers.map((member) => (
                   <div
                     key={member.uid}
-                    className="flex items-center justify-between my-2"
+                    className="flex items-center justify-between my-4"
                   >
                     <span className="flex items-center">
                       <div className="h-14 w-14 rounded-full bg-blue-950 text-slate-300 flex items-center justify-center font-semibold text-2xl roboto-font">

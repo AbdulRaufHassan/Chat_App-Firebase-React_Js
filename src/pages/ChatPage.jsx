@@ -68,13 +68,6 @@ function ChatPage() {
     );
     onSnapshot(groupsQuery, (querySnapshot) => {
       const tempArr = querySnapshot.docs.map((doc) => doc.data());
-      if (currentGroup?.groupId) {
-        let realTimeCurrentGroup = tempArr.filter(
-          (v) => currentGroup.groupId === v.groupId
-        );
-        console.log(realTimeCurrentGroup[0]);
-        setCurrentGroup(realTimeCurrentGroup[0]);
-      }
       setAllGroups(tempArr);
       setGroupListLoading(false);
     });
@@ -108,7 +101,13 @@ function ChatPage() {
 
   return (
     <div className="w-full min-h-screen max-h-screen overflow-y-hidden flex bg-slate-400">
-      <section className="bg-blue-950 border-r border-gray-400 contactListSec">
+      <section
+        className={`${
+          currentGroup?.groupId || currentContact?.uid
+            ? "hideLeftSection"
+            : "showLeftSection"
+        } bg-blue-950 border-r border-gray-400 leftSection `}
+      >
         <header className="w-full">
           <div className="w-full bg-slate-300 border-r border-gray-400 p-2 flex items-center justify-between box-border">
             <div
@@ -245,6 +244,7 @@ function ChatPage() {
         generateChatId={generateChatId}
         activeTab={activeTab}
         setCurrentGroup={setCurrentGroup}
+        setCurrentContact={setCurrentContact}
       />
     </div>
   );
