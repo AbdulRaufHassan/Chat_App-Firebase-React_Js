@@ -14,11 +14,12 @@ import {
   doc,
   arrayUnion,
 } from "../config/index.js";
-import { Spin } from "antd";
+import { Dropdown, Popconfirm, Spin } from "antd";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { FaXmark } from "react-icons/fa6";
 import { IoArrowBackOutline } from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
+import { IoMdMore } from "react-icons/io";
 import ProfileDrawer from "./ProfileDrawer.jsx";
 
 function ChatSection({
@@ -45,6 +46,7 @@ function ChatSection({
 
   const sendMsg = async () => {
     setMessageInputVal("");
+    setShowEmojiPicker(false);
     if (messageInputVal.trim()) {
       if (isContact) {
         if (!currentContact.contacts.includes(currentUserDoc.uid)) {
@@ -216,6 +218,7 @@ function ChatSection({
             setCurrentGroup={setCurrentGroup}
           />
           <section
+            onClick={() => showEmojiPicker && setShowEmojiPicker(false)}
             className={`flex py-10 px-3 box-border allMsgsParentDiv ${
               allMessages.length && !msgsLoading
                 ? "flex-col-reverse"
@@ -232,7 +235,7 @@ function ChatSection({
                 return (
                   <div
                     key={i}
-                    className={`flex items-end h-fit w-fit my-3 msg_parent_div ${
+                    className={`flex items-end h-fit w-fit my-7 msg_parent_div ${
                       v.senderId == currentUserDoc.uid
                         ? "self-end outgoingMsg"
                         : "self-start incomingMsg"
@@ -330,6 +333,13 @@ function ChatSection({
               ref={messageInputRef}
               className="flex-1 p-3 mx-4 bg-gray-500 rounded-xl text-xl box-border text-white placeholder:text-slate-300 focus:outline-none josefin-font msgInput"
               value={messageInputVal}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  if (messageInputVal.trim()) {
+                    sendMsg();
+                  }
+                }
+              }}
               onChange={(e) => setMessageInputVal(e.target.value)}
               placeholder="Type a message"
             />
@@ -359,7 +369,7 @@ function ChatSection({
           style={{
             position: "absolute",
             bottom: "82px",
-            left: "20px",
+            left: "05px",
             zIndex: "2000",
           }}
           width="350px"

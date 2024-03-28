@@ -21,7 +21,8 @@ import {
   onSnapshot,
   serverTimestamp,
   orderBy,
-  deleteField
+  deleteField,
+  arrayRemove
 } from "firebase/firestore";
 import {
   getStorage,
@@ -60,6 +61,7 @@ export {
   where,
   updateDoc,
   arrayUnion,
+  arrayRemove,
   addDoc,
   onSnapshot,
   serverTimestamp,

@@ -75,7 +75,7 @@
 
 .contact_list::-webkit-scrollbar-thumb,
 .groups_list::-webkit-scrollbar-thumb {
-  background: rgb(203 213 225) !important;
+  background: rgb(156 163 175) !important;
   border-radius: 15px;
 }
 
@@ -241,6 +241,22 @@
 .chatSecBackBtn {
   display: none !important;
 }
+
+.ant-dropdown {
+  right: 11px !important;
+  min-width: 150px !important;
+  max-width: 150px !important;
+}
+
+.ant-drawer {
+  z-index: 1500 !important;
+}
+
+.ant-popover {
+  transform-origin: unset !important;
+  right: 170px !important;
+}
+
 
 @media only screen and (max-width: 800px) {
   .rightSection {

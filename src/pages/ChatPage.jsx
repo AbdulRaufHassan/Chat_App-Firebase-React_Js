@@ -67,7 +67,16 @@ function ChatPage() {
       where("members", "array-contains", currentUserDoc.uid)
     );
     onSnapshot(groupsQuery, (querySnapshot) => {
-      const tempArr = querySnapshot.docs.map((doc) => doc.data());
+      const tempArr = [];
+      querySnapshot.docs.forEach((doc) => {
+        tempArr.push(doc.data());
+        if (
+          currentGroup?.groupId &&
+          doc.data().groupId == currentGroup.groupId
+        ) {
+          setCurrentGroup({...doc.data()});
+        }
+      });
       setAllGroups(tempArr);
       setGroupListLoading(false);
     });
@@ -184,6 +193,8 @@ function ChatPage() {
                 openProfileDrawer={openProfileDrawer}
                 setOpenProfileDrawer={setOpenProfileDrawer}
                 currentUserDoc={currentUserDoc}
+                currentGroup={null}
+                currentContact={null}
               />
               <button
                 className="flex flex-col items-center mr-3"

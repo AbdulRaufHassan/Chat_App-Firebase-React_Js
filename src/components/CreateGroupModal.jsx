@@ -15,6 +15,7 @@ function CreateGroupModal({
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [showValidationMsg, setShowValidationMsg] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [createBtnClicked, setCreateBtnClicked] = useState(false);
 
   const {
     register,
@@ -26,6 +27,7 @@ function CreateGroupModal({
 
   const closeModal = () => {
     setSelectedMembers([]);
+    setCreateBtnClicked(false);
     reset();
     clearErrors();
     setShowValidationMsg(false);
@@ -52,15 +54,11 @@ function CreateGroupModal({
   }));
 
   const handleChange = (selectedValues) => {
-    if (selectedValues.length < 2) {
-      setShowValidationMsg(true);
-    } else if (selectedValues.length >= 2) {
-      setShowValidationMsg(false);
-    }
     setSelectedMembers(selectedValues.map((uid) => uid));
   };
 
   const createGroup = async ({ groupName }) => {
+    setCreateBtnClicked(true);
     if (selectedMembers.length >= 2) {
       setBtnLoading(true);
       const generateGroupId = uuidv4();
@@ -76,10 +74,8 @@ function CreateGroupModal({
   };
 
   useEffect(() => {
-    if (errors.groupName && selectedMembers.length < 2) {
-      setShowValidationMsg(true);
-    }
-  }, [errors, selectedMembers]);
+    setShowValidationMsg(createBtnClicked && selectedMembers.length < 2);
+  }, [createBtnClicked, selectedMembers]);
 
   return (
     <Modal

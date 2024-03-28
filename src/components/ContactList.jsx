@@ -23,8 +23,6 @@ function ContactList({
             const chatId = generateChatId(contact.uid);
             const lastMessageObj =
               contact.lastMessages && contact.lastMessages[chatId];
-            const isCurrentUserSender =
-              lastMessageObj && lastMessageObj.senderUid === currentUserDoc.uid;
             return (
               <li
                 key={contact.uid}

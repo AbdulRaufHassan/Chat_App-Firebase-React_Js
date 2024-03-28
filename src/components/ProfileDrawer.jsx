@@ -1,4 +1,4 @@
-import { Drawer, Spin } from "antd";
+import { Drawer, Spin, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
@@ -12,6 +12,7 @@ import {
   getDownloadURL,
   storage,
   deleteField,
+  arrayRemove,
 } from "../config/index.js";
 
 function ProfileDrawer({
@@ -28,7 +29,9 @@ function ProfileDrawer({
   const [emailAdddress, setEmailAddress] = useState("");
   const [selectedPhotoSrc, setSelectedPhotoSrc] = useState(null);
   const [selectedPhotoFile, setSelectedPhotoFile] = useState(null);
+  const [sortedGroupMembers, setSortedGroupMembers] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [showDeleteMemberBtn, setShowDeleteMemberBtn] = useState({});
   let nameInputRef = useRef();
 
   const nameEdit = async () => {
@@ -141,6 +144,16 @@ function ProfileDrawer({
     }
   }, [nameEditDisabled]);
 
+  useEffect(() => {
+    if (currentGroup?.groupId) {
+      const sortedArray = allGroupMembers.slice().sort((a, b) => {
+        if (a.uid === currentGroup.adminUID) return -1;
+        if (b.uid === currentGroup.adminUID) return 1;
+        return 0;
+      });
+      setSortedGroupMembers(sortedArray);
+    }
+  }, [currentGroup, allGroupMembers]);
   return (
     <>
       <Drawer
@@ -234,7 +247,8 @@ function ProfileDrawer({
               ? !selectedPhotoSrc &&
                 !uploading && (
                   <span
-                  htmlFor="profile_picture"  className="cursor-pointer flex items-center justify-center absolute bottom-2 right-5 w-10 h-10 rounded-full bg-gray-400 text-blue-950"
+                    htmlFor="profile_picture"
+                    className="cursor-pointer flex items-center justify-center absolute bottom-2 right-5 w-10 h-10 rounded-full bg-gray-400 text-blue-950"
                     style={{ transform: "rotate(-17deg)" }}
                   >
                     <label
@@ -336,11 +350,23 @@ function ProfileDrawer({
             </span>
           </div>
           {currentGroup?.groupId ? (
-            <div className="w-full mt-6">
-              <h6 className="josefin-font text-gray-500 text-lg">Members</h6>
+            <div className="w-full mt-8">
+              <div className="flex items-center justify-between">
+                <h6 className="josefin-font text-gray-500 text-lg">Members</h6>
+              </div>
               <ul>
-                {allGroupMembers.map((member) => (
-                  <div
+                {sortedGroupMembers.map((member) => (
+                  <li
+                    onMouseEnter={() =>
+                      setShowDeleteMemberBtn({
+                        [member.uid]: true,
+                      })
+                    }
+                    onMouseLeave={() =>
+                      setShowDeleteMemberBtn({
+                        [member.uid]: false,
+                      })
+                    }
                     key={member.uid}
                     className="flex items-center justify-between my-4"
                   >
@@ -358,6 +384,8 @@ function ProfileDrawer({
                       <div className="mx-2 text-xl font-semibold">
                         {member.uid == currentUserDoc.uid
                           ? "You"
+                          : member.fullName.length > 15
+                          ? `${member.fullName.slice(0, 18)}...`
                           : member.fullName}
                       </div>
                     </span>
@@ -369,7 +397,7 @@ function ProfileDrawer({
                         Admin
                       </span>
                     )}
-                  </div>
+                  </li>
                 ))}
               </ul>
             </div>
