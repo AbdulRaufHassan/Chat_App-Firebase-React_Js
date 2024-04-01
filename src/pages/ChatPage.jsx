@@ -70,17 +70,39 @@ function ChatPage() {
       const tempArr = [];
       querySnapshot.docs.forEach((doc) => {
         tempArr.push(doc.data());
-        if (
-          currentGroup?.groupId &&
-          doc.data().groupId == currentGroup.groupId
-        ) {
-          setCurrentGroup({...doc.data()});
-        }
       });
       setAllGroups(tempArr);
       setGroupListLoading(false);
     });
   };
+
+  useEffect(() => {
+    if (
+      currentGroup?.groupId &&
+      (!currentGroup.members.includes(currentUserDoc.uid) ||
+        !allGroups.some((group) => group.groupId === currentGroup.groupId))
+    ) {
+      setCurrentGroup({});
+    }
+  }, [getAllGroups]);
+
+  useEffect(() => {
+    if (currentContact?.uid && allContacts.length > 0) {
+      const realTimeCurrentContact = allContacts.filter(
+        (contact) => contact.uid == currentContact.uid
+      );
+      setCurrentContact(realTimeCurrentContact[0]);
+    }
+  }, [allContacts]);
+
+  useEffect(() => {
+    if (currentGroup?.groupId && allGroups.length > 0) {
+      const realTimeCurrentGroup = allGroups.filter(
+        (group) => group.uid == currentGroup.groupId
+      );
+      setCurrentContact(realTimeCurrentGroup[0]);
+    }
+  }, [allGroups]);
 
   useEffect(() => {
     getCurrentUser();

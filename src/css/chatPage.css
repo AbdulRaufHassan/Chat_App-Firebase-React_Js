@@ -242,21 +242,26 @@
   display: none !important;
 }
 
-.ant-dropdown {
-  right: 11px !important;
-  min-width: 150px !important;
-  max-width: 150px !important;
-}
-
 .ant-drawer {
   z-index: 1500 !important;
 }
 
-.ant-popover {
-  transform-origin: unset !important;
-  right: 170px !important;
+.ant-popconfirm {
+  z-index: 3000 !important;
 }
 
+.ant-popover svg,.ant-popconfirm-buttons button:nth-of-type(2) {
+  color: red !important;
+}
+
+.ant-popconfirm-buttons button:nth-of-type(2){
+  background-color: whitesmoke !important;
+  color: red !important;
+}
+
+.ant-select-selector{
+  min-height: 60px !important;
+}
 
 @media only screen and (max-width: 800px) {
   .rightSection {
@@ -289,5 +294,8 @@
   }
   .emojiPickerBtn {
     margin-left: 5px !important;
+  }
+  .ant-drawer-body{
+    padding: 10px !important;
   }
 }

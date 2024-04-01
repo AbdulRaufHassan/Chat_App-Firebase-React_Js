@@ -20,9 +20,11 @@ import {
   addDoc,
   onSnapshot,
   serverTimestamp,
+  deleteDoc,
   orderBy,
   deleteField,
-  arrayRemove
+  arrayRemove,
+  writeBatch
 } from "firebase/firestore";
 import {
   getStorage,
@@ -64,9 +66,11 @@ export {
   arrayRemove,
   addDoc,
   onSnapshot,
+  deleteDoc,
   serverTimestamp,
   orderBy,
   deleteField,
+  writeBatch,
   storage,
   ref,
   uploadBytesResumable,

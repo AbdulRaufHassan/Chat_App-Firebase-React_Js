@@ -8,7 +8,6 @@ function ContactList({
   currentContact,
   setCurrentContact,
   generateChatId,
-  currentUserDoc,
 }) {
   return (
     <>
@@ -19,7 +18,7 @@ function ContactList({
       ) : allContacts.length ? (
         <ul className="contact_list">
           {allContacts.map((contact) => {
-            let contactIdMatch = currentContact.uid == contact.uid;
+            let contactIdMatch = currentContact?.uid == contact.uid;
             const chatId = generateChatId(contact.uid);
             const lastMessageObj =
               contact.lastMessages && contact.lastMessages[chatId];

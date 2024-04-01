@@ -1,5 +1,5 @@
 import { Spin } from "antd";
-import React, { useEffect } from "react";
+import React from "react";
 
 function GroupList({
   groupListLoading,
@@ -98,7 +98,7 @@ function GroupList({
         </ul>
       ) : (
         <div className="w-4/5 mx-auto flex flex-col justify-center items-center text-xl josefin-font text-slate-300 zeroContactMsg">
-          <p>You have no groups</p>
+          <p>You have no group</p>
         </div>
       )}
     </>

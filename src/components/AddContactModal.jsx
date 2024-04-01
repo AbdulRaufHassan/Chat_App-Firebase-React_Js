@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { emailRegex } from "../contants";
 import {
   arrayUnion,
-  auth,
   collection,
   db,
   doc,
@@ -15,20 +14,18 @@ import {
   where,
 } from "../config/index.js";
 
-function AddContactModal({
-  currentUserDoc,
-  openModal,
-  setOpenModal,
-}) {
+function AddContactModal({ currentUserDoc, openModal, setOpenModal }) {
   const [btnLoading, setBtnLoading] = useState(false);
   const {
     register,
     handleSubmit,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm();
 
   const closeModal = () => {
+    reset();
     clearErrors();
     setOpenModal(false);
   };
@@ -40,7 +37,7 @@ function AddContactModal({
       message.error({
         type: "error",
         content: "You cannot add yourself as a contact",
-        duration: 1,
+        duration: 2,
       });
     } else {
       const usersRef = collection(db, "users");
@@ -52,7 +49,7 @@ function AddContactModal({
           message.info({
             type: "info",
             content: "Contact already exists",
-            duration: 1,
+            duration: 2,
           });
           setBtnLoading(false);
         } else {
@@ -63,7 +60,7 @@ function AddContactModal({
           message.success({
             type: "success",
             content: "Contact added successfully",
-            duration: 1,
+            duration: 2,
           });
           closeModal();
         }
@@ -71,7 +68,7 @@ function AddContactModal({
         message.error({
           type: "error",
           content: "User does not exist",
-          duration: 1,
+          duration: 2,
         });
       }
     }
@@ -79,7 +76,12 @@ function AddContactModal({
   };
 
   return (
-    <Modal open={openModal} footer={null} onCancel={closeModal} maskClosable={false}>
+    <Modal
+      open={openModal}
+      footer={null}
+      onCancel={closeModal}
+      maskClosable={false}
+    >
       <div>
         <h1 className="roboto-font text-blue-950 font-semibold text-2xl">
           Add Contact

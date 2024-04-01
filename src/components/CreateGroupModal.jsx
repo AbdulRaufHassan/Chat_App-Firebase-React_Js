@@ -1,7 +1,7 @@
 import { Modal, Select, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import "../css/chatPage.css";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { whiteSpaceRegex } from "../contants";
 import { v4 as uuidv4 } from "uuid";
 import { db, doc, setDoc } from "../config/index.js";
@@ -118,10 +118,10 @@ function CreateGroupModal({
               {errors.groupName.message}
             </h6>
           )}
-
           <Select
             mode="multiple"
             size="middle"
+            allowClear={true}
             value={selectedMembers}
             placeholder="Select Members"
             showSearch={false}
@@ -131,7 +131,6 @@ function CreateGroupModal({
             }`}
             style={{
               width: "100%",
-              height: "60px",
             }}
             options={options}
           />

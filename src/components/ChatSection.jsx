@@ -14,12 +14,11 @@ import {
   doc,
   arrayUnion,
 } from "../config/index.js";
-import { Dropdown, Popconfirm, Spin } from "antd";
+import { Spin } from "antd";
 import CHAT_ICON from "../assets/images/chat_icon.svg";
 import { FaXmark } from "react-icons/fa6";
 import { IoArrowBackOutline } from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
-import { IoMdMore } from "react-icons/io";
 import ProfileDrawer from "./ProfileDrawer.jsx";
 
 function ChatSection({
@@ -39,7 +38,6 @@ function ChatSection({
   const [allMessages, setAllMessages] = useState([]);
   const [allGroupMembers, setAllGroupMembers] = useState([]);
   const [openProfileDrawer, setOpenProfileDrawer] = useState(false);
-
   let messageInputRef = useRef();
   let isContact = currentContact?.uid;
   let isGroup = currentGroup?.groupId;
@@ -216,6 +214,7 @@ function ChatSection({
             currentGroup={currentGroup}
             allGroupMembers={allGroupMembers}
             setCurrentGroup={setCurrentGroup}
+            allContacts={allContacts}
           />
           <section
             onClick={() => showEmojiPicker && setShowEmojiPicker(false)}
@@ -375,7 +374,6 @@ function ChatSection({
           width="350px"
           height="400px"
           onEmojiClick={(emojiObject) => {
-            console.log(emojiObject);
             setMessageInputVal((prevVal) => prevVal + emojiObject.emoji);
           }}
         />
