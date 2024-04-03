@@ -109,7 +109,7 @@
 }
 
 .msg_style {
-  border-radius: 30px;
+  border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
@@ -118,6 +118,7 @@
   border-top-right-radius: 0px !important;
   margin-right: 28px;
   background-color: rgb(203 213 225);
+  align-self: self-end !important;
 }
 
 .outgoingMsg .msg_style > p {
@@ -140,6 +141,7 @@
   border-top-left-radius: 0px !important;
   margin-left: 28px;
   background-color: rgb(23 37 84);
+  align-self: self-start !important;
 }
 
 .msg_style::after {
@@ -250,16 +252,17 @@
   z-index: 3000 !important;
 }
 
-.ant-popover svg,.ant-popconfirm-buttons button:nth-of-type(2) {
+.ant-popover svg,
+.ant-popconfirm-buttons button:nth-of-type(2) {
   color: red !important;
 }
 
-.ant-popconfirm-buttons button:nth-of-type(2){
+.ant-popconfirm-buttons button:nth-of-type(2) {
   background-color: whitesmoke !important;
   color: red !important;
 }
 
-.ant-select-selector{
+.ant-select-selector {
   min-height: 60px !important;
 }
 
@@ -295,7 +298,10 @@
   .emojiPickerBtn {
     margin-left: 5px !important;
   }
-  .ant-drawer-body{
+  .ant-drawer-body {
     padding: 10px !important;
+  }
+  .msg_style {
+    width: 90% !important;
   }
 }

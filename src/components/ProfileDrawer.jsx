@@ -42,7 +42,6 @@ function ProfileDrawer({
   const [nonGroupMembers, setNonGroupMembers] = useState([]);
   const [selectedMembersUids, setSelectedMembersUids] = useState([]);
   const [addMemberBtnLoading, setAddMemberBtnLoading] = useState(false);
-  const [hoveredMember, setHoveredMember] = useState(null);
   const [popconfirmBtnLoading, setpopconfirmBtnLoading] = useState(false);
   let nameInputRef = useRef();
 
@@ -193,7 +192,6 @@ function ProfileDrawer({
     setInputValidationMsg("");
     setNonGroupMembers([]);
     setSelectedMembersUids([]);
-    setHoveredMember(null);
     setOpenProfileDrawer(false);
   };
 
@@ -225,7 +223,6 @@ function ProfileDrawer({
     await updateDoc(doc(db, "groups", currentGroup.groupId), {
       members: arrayRemove(memberUid),
     });
-    setHoveredMember(null);
     let updatedMembers = currentGroup.members.filter(
       (member) => member != memberUid
     );
@@ -539,10 +536,6 @@ function ProfileDrawer({
                   <li
                     key={member.uid}
                     className="flex items-center justify-between my-4"
-                    onMouseEnter={() => setHoveredMember(member.uid)}
-                    onMouseLeave={() =>
-                      !hoveredMember && setHoveredMember(null)
-                    }
                   >
                     <span className="flex items-center justify-between">
                       <div className="h-14 w-14 rounded-full bg-blue-950 text-slate-300 flex items-center justify-center font-semibold text-2xl roboto-font">
@@ -564,13 +557,11 @@ function ProfileDrawer({
                       </div>
                     </span>
                     {currentGroup.adminUID === currentUserDoc.uid &&
-                      currentGroup.adminUID != member.uid &&
-                      hoveredMember === member.uid && (
+                      currentGroup.adminUID != member.uid && (
                         <Popconfirm
                           title="Remove Member"
                           description="Are you sure you want to remove this member from the group?"
                           onConfirm={() => removeMember(member.uid)}
-                          onCancel={() => setHoveredMember(null)}
                           okButtonProps={{ loading: popconfirmBtnLoading }}
                         >
                           <MdDelete

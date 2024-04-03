@@ -240,7 +240,7 @@ function ChatSection({
                         : "self-start incomingMsg"
                     }`}
                   >
-                    <div>
+                    <div className="flex flex-col">
                       <h6
                         className={`${
                           v.senderId == currentUserDoc.uid
@@ -258,9 +258,9 @@ function ChatSection({
                       </h6>
                       <div
                         key={i}
-                        className="relative px-3 pt-3 pb-6 box-border min-h-32 max-h-fit min-w-60 max-w-fit flex flex-col justify-center items-center msg_style"
+                        className="relative flex justify-center items-center px-3 pt-3 pb-6 box-border min-h-24 max-h-fit min-w-60 w-5/6 msg_style"
                       >
-                        <p className="z-50 mt-3 text-center text-lg tracking-wide josefin-font">
+                        <p className="mt-1 leading-normal break-words text-center text-base tracking-wide w-full josefin-font">
                           {v.msg}
                         </p>
                         <div
