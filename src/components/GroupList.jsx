@@ -7,7 +7,6 @@ function GroupList({
   setCurrentGroup,
   currentGroup,
 }) {
-
   return (
     <>
       {groupListLoading ? (
@@ -18,7 +17,6 @@ function GroupList({
         <ul className="groups_list">
           {allGroups.map((group) => {
             let groupIdMatch = currentGroup.groupId == group.groupId;
-            const member = {};
             return (
               <li
                 key={group.groupId}

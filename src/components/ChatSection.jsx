@@ -164,7 +164,7 @@ function ChatSection({
         isContact || isGroup
           ? "bg-slate-400 showRightSection"
           : "bg-slate-300 flex justify-center items-center hideRightSection"
-      } flex-1 MessageSec relative rightSection`}
+      } flex-1 MessageSec relative box-border rightSection`}
     >
       {isContact || isGroup ? (
         <>
@@ -240,7 +240,13 @@ function ChatSection({
                         : "self-start incomingMsg"
                     }`}
                   >
-                    <div className="flex flex-col">
+                    <div
+                      className="flex flex-col"
+                      style={{
+                        maxWidth: "calc(100% - 56px)",
+                        minWidth: "calc(100% - 56px)",
+                      }}
+                    >
                       <h6
                         className={`${
                           v.senderId == currentUserDoc.uid
@@ -258,9 +264,9 @@ function ChatSection({
                       </h6>
                       <div
                         key={i}
-                        className="relative flex justify-center items-center px-3 pt-3 pb-6 box-border min-h-24 max-h-fit min-w-60 w-5/6 msg_style"
+                        className="relative flex justify-center items-center px-3 pb-8 box-border min-h-fit max-h-fit msg_style"
                       >
-                        <p className="mt-1 leading-normal break-words text-center text-base tracking-wide w-full josefin-font">
+                        <p className="mt-3 leading-normal break-words text-center text-base tracking-wide w-full josefin-font">
                           {v.msg}
                         </p>
                         <div

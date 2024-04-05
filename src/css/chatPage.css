@@ -53,7 +53,12 @@
 }
 
 .leftSection {
-  width: 400px;
+  min-width: 400px;
+  max-width: 400px;
+}
+
+.rightSection {
+  width: calc(100% - 400px);
 }
 
 .contact_list > li:nth-of-type(1) > div:nth-of-type(2),
@@ -105,13 +110,17 @@
 }
 
 .msg_parent_div {
-  height: 157px;
+  max-width: 100%;
+  min-width: 100%;
 }
 
 .msg_style {
-  border-radius: 20px;
+  border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  min-width: 240px;
+  max-width: calc(100% - 56px);
+  word-break: break-all;
 }
 
 .outgoingMsg .msg_style {
@@ -268,13 +277,15 @@
 
 @media only screen and (max-width: 800px) {
   .rightSection {
-    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
   }
   .hideRightSection {
     display: none !important;
   }
   .leftSection {
-    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
   }
   .hideLeftSection {
     display: none !important;
@@ -302,6 +313,6 @@
     padding: 10px !important;
   }
   .msg_style {
-    width: 90% !important;
+    max-width: calc(100% - 56px) !important;
   }
 }
